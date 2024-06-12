@@ -1,5 +1,5 @@
 <?php
-include 'db.php';
+include '../../database/db.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = $_POST['name'];
@@ -9,13 +9,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $startDate = $_POST['startDate'];
     $salary = $_POST['salary'];
 
-    $sql = "INSERT INTO employees (name, position, office, age, startDate, salary) VALUES (?, ?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO users (name, position, office, age, startDate, salary) VALUES (?, ?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
 
     if ($stmt) {
         $stmt->bind_param("sssisi", $name, $position, $office, $age, $startDate, $salary);
         if ($stmt->execute()) {
-            echo json_encode(["success" => true, "message" => "Employee added successfully"]);
+            header('Location: ../index.php');
+            exit;
+            // echo json_encode(["success" => true, "message" => "Employee added successfully"]);
         } else {
             echo json_encode(["success" => false, "message" => "Failed to add employee: " . $stmt->error]);
         }
@@ -28,4 +30,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $conn->close();
-?>

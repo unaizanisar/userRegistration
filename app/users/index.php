@@ -1,5 +1,8 @@
+<?php include '../database/db.php'  ?>
+
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,30 +10,31 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <title>Users Table</title>
-    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="../../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
-    <link href="css/sb-admin-2.min.css" rel="stylesheet">
-    <link href="vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <link href="../../css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="../../vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-toast-plugin/1.3.2/jquery.toast.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
+
 <body id="page-top">
     <div id="wrapper">
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
                 <div>
-                    <i class="fas fa-university fa-fw"></i>  
+                    <i class="fas fa-university fa-fw"></i>
                 </div>
                 <div class="sidebar-brand-text mx-3">Bank Employees</div>
             </a>
             <li class="nav-item">
-                <a class="nav-link" href="index.html">
+                <a class="nav-link" href="../dashboard/index.html">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="tables.html">
+                <a class="nav-link" href="./index.php">
                     <i class="fas fa-fw fa-users"></i>
                     <span>Users</span></a>
             </li>
@@ -40,14 +44,11 @@
                 <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
                     <ul class="navbar-nav ml-auto">
                         <li class="nav-item dropdown no-arrow">
-                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="mr-2 d-none d-lg-inline text-gray-600 small">Douglas McGee</span>
-                                <img class="img-profile rounded-circle"
-                                    src="img/undraw_profile.svg">
+                                <img class="img-profile rounded-circle" src="img/undraw_profile.svg">
                             </a>
-                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                                aria-labelledby="userDropdown">
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
                                 <a class="dropdown-item" href="#">
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Profile
@@ -59,7 +60,7 @@
                                 <a class="dropdown-item" href="#">
                                     <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Activity Log
-                                </a>   
+                                </a>
                             </div>
                         </li>
                     </ul>
@@ -67,7 +68,7 @@
                 <div class="container-fluid">
                     <h1 class="h3 mb-2 text-gray-800">Employees Data</h1>
                     <div class="col text-right">
-                        <a href="register.html" class="btn btn-primary">Add New Employee</a>
+                        <a href="./create.html" class="btn btn-primary">Add New Employee</a>
                     </div> <br>
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
@@ -75,10 +76,10 @@
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">           
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                     <thead>
                                         <tr>
-                                            <th>Serial No.</th>
+                                            <th>#</th>
                                             <th>Name</th>
                                             <th>Position</th>
                                             <th>Office</th>
@@ -88,7 +89,38 @@
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
-                                    <tbody>                                                
+                                    <tbody>
+                                        <?php
+                                        $sql = "SELECT * FROM users order by id desc";
+                                        $result = mysqli_query($conn, $sql);
+                                        if (mysqli_num_rows($result) > 0) {
+                                            $count = 0;
+                                            while ($row = mysqli_fetch_assoc($result)) { ?>
+                                                <tr>
+                                                    <td><?php echo ++$count; ?></td>
+                                                    <td><?php echo $row["name"]; ?></td>
+                                                    <td><?php echo $row["position"]; ?></td>
+                                                    <td><?php echo $row["office"]; ?></td>
+                                                    <td><?php echo $row["age"]; ?></td>
+                                                    <td><?php echo $row["start_date"]; ?></td>
+                                                    <td><?php echo $row["salary"]; ?></td>
+                                                    <td>
+                                                        <!-- Actions buttons -->
+                                                        <a href="#" class="btn btn-sm btn-info"><i class='fa fa-eye'></i></a> |
+                                                        <a href="#" class="btn btn-sm btn-primary"><i class='fa fa-pen'></i></a> |
+                                                        <a href="#" class="btn btn-sm btn-danger"><i class='fa fa-trash'></i></a>
+                                                    </td>
+                                                </tr>
+
+                                        <?php
+                                            }
+                                        } else {
+                                            echo "0 results";
+                                        }
+
+                                        // Close connection
+                                        mysqli_close($conn);
+                                        ?>
                                     </tbody>
                                 </table>
                             </div>
@@ -108,8 +140,7 @@
     <a class="scroll-to-top rounded" href="#page-top">
         <i class="fas fa-angle-up"></i>
     </a>
-    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -126,12 +157,12 @@
             </div>
         </div>
     </div>
-    <script src="vendor/jquery/jquery.min.js"></script>
-    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="js/sb-admin-2.min.js"></script>
-    <script src="vendor/datatables/jquery.dataTables.min.js"></script>
-    <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-toast-plugin/1.3.2/jquery.toast.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="../../vendor/jquery/jquery.min.js"></script>
+    <script src="../../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="../../js/sb-admin-2.min.js"></script>
+    <script src="../../vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="../../vendor/datatables/dataTables.bootstrap4.min.js"></script>
+    <script src="../../https://cdnjs.cloudflare.com/ajax/libs/jquery-toast-plugin/1.3.2/jquery.toast.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script>
         $(document).ready(function() {
             // Function to render users in the table
@@ -157,7 +188,7 @@
                     `);
                 });
             }
-    
+
             // Load users from the database
             function loadUsers() {
                 $.ajax({
@@ -169,10 +200,10 @@
                     }
                 });
             }
-    
+
             // Initial load
             loadUsers();
-    
+
             // Delete button click event
             $('#dataTable').on('click', '.btn-delete', function() {
                 var id = $(this).closest('tr').data('id');
@@ -181,7 +212,9 @@
                     $.ajax({
                         url: 'delete.php',
                         method: 'POST',
-                        data: { id: id },
+                        data: {
+                            id: id
+                        },
                         success: function(response) {
                             var result = JSON.parse(response);
                             if (result.success) {
@@ -201,7 +234,7 @@
                     });
                 }
             });
-    
+
             // Edit button click event
             $('#dataTable').on('click', '.btn-edit', function() {
                 var id = $(this).closest('tr').data('id');
@@ -216,7 +249,7 @@
                     }
                 });
             });
-    
+
             // Details button click event
             $('#dataTable').on('click', '.btn-details', function() {
                 var id = $(this).closest('tr').data('id');
@@ -231,7 +264,7 @@
                     }
                 });
             });
-    
+
             if (localStorage.getItem('isShowUpdatedToast') == 1) {
                 $.toast({
                     heading: 'Updated',
@@ -243,7 +276,7 @@
                 });
                 localStorage.removeItem('isShowUpdatedToast');
             }
-    
+
             if (localStorage.getItem('newUserAddedToast') == 1) {
                 $.toast({
                     heading: 'Added',
@@ -257,8 +290,9 @@
             }
         });
     </script>
-    
-    
+
+
 </body>
+
 </html>
 <!--php -S localhost:3636 -t .-->
