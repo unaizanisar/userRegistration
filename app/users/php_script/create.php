@@ -2,19 +2,22 @@
 include '../../database/db.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $name = $_POST['name'];
-    $position = $_POST['position'];
-    $office = $_POST['office'];
-    $age = $_POST['age'];
-    $startDate = $_POST['startDate'];
-    $salary = $_POST['salary'];
+    $firstname = $_POST['firstname'];
+    $lastname = $_POST['lastname'];
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+    $address = $_POST['address'];
+    $gender = $_POST['gender'];
+    $phone = $_POST['phone'];
 
-    $sql = "INSERT INTO users (name, position, office, age, startDate, salary) VALUES (?, ?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO users (firstname, lastname, email, password, address, gender, phone) VALUES (?, ?, ?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
 
     if ($stmt) {
-        $stmt->bind_param("sssisi", $name, $position, $office, $age, $startDate, $salary);
+        $stmt->bind_param("ssssssi", $firstname, $lastname, $email, $password, $address, $gender, $phone);
         if ($stmt->execute()) {
+            session_start();
+            $_SESSION['create_message'] = 'New user added successfully.';
             header('Location: ../index.php');
             exit;
             // echo json_encode(["success" => true, "message" => "Employee added successfully"]);
@@ -30,3 +33,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $conn->close();
+?>

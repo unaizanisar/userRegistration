@@ -1,4 +1,19 @@
 <?php include '../database/db.php'  ?>
+<?php
+include '../database/db.php';
+session_start(); // Start session to access session variables
+
+// Check for delete message in session
+$deleteMessage = isset($_SESSION['delete_message']) ? $_SESSION['delete_message'] : '';
+$createMessage = isset($_SESSION['create_message']) ? $_SESSION['create_message'] : '';
+$editMessage = isset($_SESSION['edit_message']) ? $_SESSION['edit_message'] : '';
+
+// Clear the session variable after displaying the message
+unset($_SESSION['delete_message']);
+unset($_SESSION['create_message']);
+unset($_SESSION['edit_message']);
+?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -24,9 +39,9 @@
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
                 <div>
-                    <i class="fas fa-university fa-fw"></i>
+                    <i class="fas fa-book fa-fw"></i>
                 </div>
-                <div class="sidebar-brand-text mx-3">Bank Employees</div>
+                <div class="sidebar-brand-text mx-3">BLOGS</div>
             </a>
             <li class="nav-item">
                 <a class="nav-link" href="../dashboard/index.html">
@@ -66,9 +81,9 @@
                     </ul>
                 </nav>
                 <div class="container-fluid">
-                    <h1 class="h3 mb-2 text-gray-800">Employees Data</h1>
+                    <h1 class="h3 mb-2 text-gray-800">BLOGS</h1>
                     <div class="col text-right">
-                        <a href="./create.html" class="btn btn-primary">Add New Employee</a>
+                        <a href="./create.html" class="btn btn-primary">Add New User</a>
                     </div> <br>
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
@@ -80,12 +95,13 @@
                                     <thead>
                                         <tr>
                                             <th>#</th>
-                                            <th>Name</th>
-                                            <th>Position</th>
-                                            <th>Office</th>
-                                            <th>Age</th>
-                                            <th>Start date</th>
-                                            <th>Salary</th>
+                                            <th>First Name</th>
+                                            <th>Last Name</th>
+                                            <th>Email</th>
+                                            <th>Password</th>
+                                            <th>Address</th>
+                                            <th>Gender</th>
+                                            <th>Phone</th>
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
@@ -98,17 +114,19 @@
                                             while ($row = mysqli_fetch_assoc($result)) { ?>
                                                 <tr>
                                                     <td><?php echo ++$count; ?></td>
-                                                    <td><?php echo $row["name"]; ?></td>
-                                                    <td><?php echo $row["position"]; ?></td>
-                                                    <td><?php echo $row["office"]; ?></td>
-                                                    <td><?php echo $row["age"]; ?></td>
-                                                    <td><?php echo $row["start_date"]; ?></td>
-                                                    <td><?php echo $row["salary"]; ?></td>
+                                                    <td><?php echo $row["firstname"]; ?></td>
+                                                    <td><?php echo $row["lastname"]; ?></td>
+                                                    <td><?php echo $row["email"]; ?></td>
+                                                    <td><?php echo $row["password"]; ?></td>
+                                                    <td><?php echo $row["address"]; ?></td>
+                                                    <td><?php echo $row["gender"]; ?></td>
+                                                    <td><?php echo $row["phone"]; ?></td>
                                                     <td>
                                                         <!-- Actions buttons -->
-                                                        <a href="#" class="btn btn-sm btn-info"><i class='fa fa-eye'></i></a> |
-                                                        <a href="#" class="btn btn-sm btn-primary"><i class='fa fa-pen'></i></a> |
-                                                        <a href="#" class="btn btn-sm btn-danger"><i class='fa fa-trash'></i></a>
+                                                        <a href="details.php?id=<?php echo $row['id']; ?>" class="btn btn-sm btn-info"title="Details"><i class='fa fa-eye'></i></a> |
+                                                        <a href="edit.php?id=<?php echo $row['id']; ?>" class="btn btn-sm btn-primary" title="Edit"><i class='fa fa-pen'></i></a> |
+                                                        <a href="delete.php?delete_id=<?php echo $row['id']; ?>" class="btn btn-sm btn-danger" title="Delete" onclick="return confirm('Are you sure you want to delete this user?');"><i class='fa fa-trash'></i></a>
+                                                        <!--<a href="delete.php?delete_id=<?php echo $row['id']; ?>" class="btn btn-sm btn-danger delete-button"><i class='fa fa-trash'></i></a> !-->
                                                     </td>
                                                 </tr>
 
@@ -163,6 +181,56 @@
     <script src="../../vendor/datatables/jquery.dataTables.min.js"></script>
     <script src="../../vendor/datatables/dataTables.bootstrap4.min.js"></script>
     <script src="../../https://cdnjs.cloudflare.com/ajax/libs/jquery-toast-plugin/1.3.2/jquery.toast.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-toast-plugin/1.3.2/jquery.toast.min.js"></script>
+<script>
+        $(document).ready(function() {
+            // Function to display toast based on delete message
+            <?php if (!empty($deleteMessage)): ?>
+                $.toast({
+                    heading: 'Deleted',
+                    text: '<?php echo $deleteMessage; ?>',
+                    icon: 'error',
+                    position: 'top-right',
+                    loader: false,
+                    loaderBg: '#9EC600'
+                });
+            <?php endif; ?>
+        });
+</script>
+<script>
+        $(document).ready(function() {
+            // Function to display toast based on updated message
+            <?php if (!empty($editMessage)): ?>
+                $.toast({
+                    heading: 'Updated!',
+                    text: '<?php echo $editMessage; ?>',
+                    icon: 'success',
+                    position: 'top-right',
+                    loader: false,
+                    loaderBg: '#9EC600'
+                });
+            <?php endif; ?>
+        });
+</script>
+<script>
+        $(document).ready(function() {
+            // Function to display toast based on createmessage
+            <?php if (!empty($createMessage)): ?>
+                $.toast({
+                    heading: 'Added!',
+                    text: '<?php echo $createMessage; ?>',
+                    icon: 'success',
+                    position: 'top-right',
+                    loader: false,
+                    loaderBg: '#9EC600'
+                });
+            <?php endif; ?>
+        });
+</script>
+
+
     <script>
         $(document).ready(function() {
             // Function to render users in the table
