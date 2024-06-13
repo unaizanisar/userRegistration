@@ -91,7 +91,7 @@ unset($_SESSION['edit_message']);
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                <table class="table table-bordered" id="users_table" width="100%" cellspacing="0">
                                     <thead>
                                         <tr>
                                             <th>#</th>
@@ -102,6 +102,7 @@ unset($_SESSION['edit_message']);
                                             <th>Address</th>
                                             <th>Gender</th>
                                             <th>Phone</th>
+                                            <th>status</th>
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
@@ -121,19 +122,33 @@ unset($_SESSION['edit_message']);
                                                     <td><?php echo $row["address"]; ?></td>
                                                     <td><?php echo $row["gender"]; ?></td>
                                                     <td><?php echo $row["phone"]; ?></td>
+                                                    <td><?php
+                                                        if ($row["status"] == 1) {
+                                                            echo '<span class="badge badge-success">Active</span>';
+                                                        } else {
+                                                            echo '<span class="badge badge-danger">In-active</span>';
+                                                        }
+                                                        ?></td>
                                                     <td>
                                                         <!-- Actions buttons -->
-                                                        <a href="details.php?id=<?php echo $row['id']; ?>" class="btn btn-sm btn-info"title="Details"><i class='fa fa-eye'></i></a> |
+                                                        <a href="details.php?id=<?php echo $row['id']; ?>" class="btn btn-sm btn-info" title="Details"><i class='fa fa-eye'></i></a> |
                                                         <a href="edit.php?id=<?php echo $row['id']; ?>" class="btn btn-sm btn-primary" title="Edit"><i class='fa fa-pen'></i></a> |
-                                                        <a href="delete.php?delete_id=<?php echo $row['id']; ?>" class="btn btn-sm btn-danger" title="Delete" onclick="return confirm('Are you sure you want to delete this user?');"><i class='fa fa-trash'></i></a>
-                                                        <!--<a href="delete.php?delete_id=<?php echo $row['id']; ?>" class="btn btn-sm btn-danger delete-button"><i class='fa fa-trash'></i></a> !-->
+                                                        <a href="delete.php?delete_id=<?php echo $row['id']; ?>" class="btn btn-sm btn-danger" title="Delete" onclick="return confirm('Are you sure you want to delete this user?');"><i class='fa fa-trash'></i></a> |
+
+                                                        <?php
+                                                        if ($row["status"] == 1) {
+                                                            echo "<a href='delete.php?delete_id=" . $row['id'] . "' class='btn btn-sm btn-success' title='INACTIVE' onclick='return confirm(\"Are you sure you want to in-active this user?\");'><i class='fa fa-user-xmark'></i></a>";
+                                                        } else {
+                                                            echo "<a href='delete.php?delete_id=" . $row['id'] . "' class='btn btn-sm btn-success' title='ACTIVE' onclick='return confirm(\"Are you sure you want to active this user?\");'><i class='fa fa-user-check'></i></a>";
+                                                        }
+                                                        ?>
                                                     </td>
                                                 </tr>
 
                                         <?php
                                             }
                                         } else {
-                                            echo "0 results";
+                                            echo "<tr style='text-align: center'><td colspan=9>Record Not Found</td></t>";
                                         }
 
                                         // Close connection
@@ -181,13 +196,15 @@ unset($_SESSION['edit_message']);
     <script src="../../vendor/datatables/jquery.dataTables.min.js"></script>
     <script src="../../vendor/datatables/dataTables.bootstrap4.min.js"></script>
     <script src="../../https://cdnjs.cloudflare.com/ajax/libs/jquery-toast-plugin/1.3.2/jquery.toast.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-toast-plugin/1.3.2/jquery.toast.min.js"></script>
-<script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-toast-plugin/1.3.2/jquery.toast.min.js"></script>
+    <script>
         $(document).ready(function() {
+
+            // $('#users_table').DataTable()
             // Function to display toast based on delete message
-            <?php if (!empty($deleteMessage)): ?>
+            <?php if (!empty($deleteMessage)) : ?>
                 $.toast({
                     heading: 'Deleted',
                     text: '<?php echo $deleteMessage; ?>',
@@ -197,12 +214,9 @@ unset($_SESSION['edit_message']);
                     loaderBg: '#9EC600'
                 });
             <?php endif; ?>
-        });
-</script>
-<script>
-        $(document).ready(function() {
+
             // Function to display toast based on updated message
-            <?php if (!empty($editMessage)): ?>
+            <?php if (!empty($editMessage)) : ?>
                 $.toast({
                     heading: 'Updated!',
                     text: '<?php echo $editMessage; ?>',
@@ -212,12 +226,9 @@ unset($_SESSION['edit_message']);
                     loaderBg: '#9EC600'
                 });
             <?php endif; ?>
-        });
-</script>
-<script>
-        $(document).ready(function() {
+
             // Function to display toast based on createmessage
-            <?php if (!empty($createMessage)): ?>
+            <?php if (!empty($createMessage)) : ?>
                 $.toast({
                     heading: 'Added!',
                     text: '<?php echo $createMessage; ?>',
@@ -227,139 +238,11 @@ unset($_SESSION['edit_message']);
                     loaderBg: '#9EC600'
                 });
             <?php endif; ?>
-        });
-</script>
 
 
-    <script>
-        $(document).ready(function() {
-            // Function to render users in the table
-            function renderUsers(users) {
-                var serialNo = 1;
-                $('#dataTable tbody').empty();
-                users.forEach(function(user) {
-                    $('#dataTable tbody').append(`
-                        <tr data-id="${user.id}">
-                            <td>${serialNo++}</td>
-                            <td>${user.name}</td>
-                            <td>${user.position}</td>
-                            <td>${user.office}</td>
-                            <td>${user.age}</td>
-                            <td>${user.startDate}</td>
-                            <td>${user.salary}</td>
-                            <td>
-                                <button class="btn btn-sm btn-info btn-details" title='Detail'><i class='fa fa-eye'></i></button> |
-                                <button class="btn btn-sm btn-warning btn-edit" title='Edit'><i class='fa fa-pen'></i></button> |
-                                <button class="btn btn-sm btn-danger btn-delete" title='Delete'><i class='fa fa-trash'></i></button>
-                            </td>
-                        </tr>
-                    `);
-                });
-            }
 
-            // Load users from the database
-            function loadUsers() {
-                $.ajax({
-                    url: 'read.php',
-                    method: 'GET',
-                    success: function(response) {
-                        var users = JSON.parse(response);
-                        renderUsers(users);
-                    }
-                });
-            }
-
-            // Initial load
-            loadUsers();
-
-            // Delete button click event
-            $('#dataTable').on('click', '.btn-delete', function() {
-                var id = $(this).closest('tr').data('id');
-                var confirmation = confirm("Are you sure you want to delete?");
-                if (confirmation) {
-                    $.ajax({
-                        url: 'delete.php',
-                        method: 'POST',
-                        data: {
-                            id: id
-                        },
-                        success: function(response) {
-                            var result = JSON.parse(response);
-                            if (result.success) {
-                                loadUsers();
-                                $.toast({
-                                    heading: 'Deleted',
-                                    text: 'Employee Deleted Successfully!',
-                                    icon: 'error',
-                                    position: 'top-center',
-                                    loader: false,
-                                    loaderBg: '#9EC600'
-                                });
-                            } else {
-                                alert(result.message);
-                            }
-                        }
-                    });
-                }
-            });
-
-            // Edit button click event
-            $('#dataTable').on('click', '.btn-edit', function() {
-                var id = $(this).closest('tr').data('id');
-                $.ajax({
-                    url: 'read.php',
-                    method: 'GET',
-                    success: function(response) {
-                        var users = JSON.parse(response);
-                        var user = users.find(u => u.id == id);
-                        localStorage.setItem('editUser', JSON.stringify(user));
-                        window.location.href = 'edit.html';
-                    }
-                });
-            });
-
-            // Details button click event
-            $('#dataTable').on('click', '.btn-details', function() {
-                var id = $(this).closest('tr').data('id');
-                $.ajax({
-                    url: 'read.php',
-                    method: 'GET',
-                    success: function(response) {
-                        var users = JSON.parse(response);
-                        var user = users.find(u => u.id == id);
-                        localStorage.setItem('detailsUser', JSON.stringify(user));
-                        window.location.href = 'details.html';
-                    }
-                });
-            });
-
-            if (localStorage.getItem('isShowUpdatedToast') == 1) {
-                $.toast({
-                    heading: 'Updated',
-                    text: 'Employee Updated Successfully!',
-                    icon: 'success',
-                    position: 'top-center',
-                    loader: false,
-                    loaderBg: '#9EC600'
-                });
-                localStorage.removeItem('isShowUpdatedToast');
-            }
-
-            if (localStorage.getItem('newUserAddedToast') == 1) {
-                $.toast({
-                    heading: 'Added',
-                    text: 'Employee Added Successfully!',
-                    icon: 'success',
-                    position: 'top-center',
-                    loader: false,
-                    loaderBg: '#9EC600'
-                });
-                localStorage.removeItem('newUserAddedToast');
-            }
         });
     </script>
-
-
 </body>
 
 </html>
