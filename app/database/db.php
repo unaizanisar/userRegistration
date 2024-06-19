@@ -2,7 +2,7 @@
 $servername = "localhost";
 $username = "root";
 $password = "password";
-$dbname = "unaiza_db";
+$dbname = "user_management";
 
 $conn = new mysqli($servername, $username, $password, $dbname);
 

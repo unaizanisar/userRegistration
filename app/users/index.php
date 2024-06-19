@@ -102,7 +102,7 @@ unset($_SESSION['edit_message']);
                                             <th>Address</th>
                                             <th>Gender</th>
                                             <th>Phone</th>
-                                            <th>status</th>
+                                            <th>Status</th>
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
@@ -137,9 +137,9 @@ unset($_SESSION['edit_message']);
 
                                                         <?php
                                                         if ($row["status"] == 1) {
-                                                            echo "<a href='delete.php?delete_id=" . $row['id'] . "' class='btn btn-sm btn-success' title='INACTIVE' onclick='return confirm(\"Are you sure you want to in-active this user?\");'><i class='fa fa-user-xmark'></i></a>";
+                                                            echo "<a href='toggle_status.php?id=" . $row['id'] . "&status=" . $row['status'] . "' class='btn btn-sm btn-success' title='INACTIVE' onclick='return confirm(\"Are you sure you want to in-active this user?\");'><i class='fa fa-user-xmark'></i></a>";
                                                         } else {
-                                                            echo "<a href='delete.php?delete_id=" . $row['id'] . "' class='btn btn-sm btn-success' title='ACTIVE' onclick='return confirm(\"Are you sure you want to active this user?\");'><i class='fa fa-user-check'></i></a>";
+                                                            echo "<a href='toggle_status.php?id=" . $row['id'] . "&status=" . $row['status'] . "' class='btn btn-sm btn-success' title='ACTIVE' onclick='return confirm(\"Are you sure you want to active this user?\");'><i class='fa fa-user-check'></i></a>";
                                                         }
                                                         ?>
                                                     </td>
@@ -162,11 +162,11 @@ unset($_SESSION['edit_message']);
                 </div>
             </div>
             <footer class="sticky-footer bg-white">
-                <div class="container my-auto">
-                    <div class="copyright text-center my-auto">
-                        <span>Copyright &copy; Your Website 2020</span>
-                    </div>
+            <div class="container my-auto">
+                <div class="copyright text-center my-auto">
+                    <span>Copyright &copy; Your Website <span id="year"></span></span>
                 </div>
+            </div>
             </footer>
         </div>
     </div>
@@ -200,6 +200,7 @@ unset($_SESSION['edit_message']);
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-toast-plugin/1.3.2/jquery.toast.min.js"></script>
     <script>
+        document.getElementById('year').textContent = new Date().getFullYear();
         $(document).ready(function() {
 
             // $('#users_table').DataTable()

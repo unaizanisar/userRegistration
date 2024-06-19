@@ -1,6 +1,9 @@
 <?php
 include '../database/db.php';
 
+// Start the session
+session_start();
+
 // Check if ID is provided in the URL
 if (isset($_GET['id'])) {
     $id = $_GET['id'];
@@ -12,11 +15,13 @@ if (isset($_GET['id'])) {
     if ($result && mysqli_num_rows($result) > 0) {
         $user = mysqli_fetch_assoc($result);
     } else {
-        echo "User not found.";
+        $_SESSION['edit_message'] = 'User not found.';
+        header("Location: index.php");
         exit;
     }
 } else {
-    echo "No user ID provided.";
+    $_SESSION['edit_message'] = 'No user ID provided.';
+    header("Location: index.php");
     exit;
 }
 
@@ -24,10 +29,8 @@ if (isset($_GET['id'])) {
 mysqli_close($conn);
 ?>
 
-
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -91,45 +94,146 @@ mysqli_close($conn);
                 </nav>
                 <div class="container-fluid">
                     <h1 class="h3 mb-2 text-gray-800">BLOGS</h1>
-    <div class="container mt-5">
-        <h3>Fill out the form to edit details!</h3> <br>
-        <form action="update.php" method="POST">
-            <input type="hidden" name="id" value="<?php echo $user['id']; ?>">
-            <div class="form-group">
-                <label for="firstname">First Name</label>
-                <input type="text" class="form-control" id="firstname" name="firstname" value="<?php echo $user['firstname']; ?>">
+                    <div class="container mt-5">
+                        <h3>Fill out the form to edit details!</h3> <br>
+                        <form id="editForm" action="update.php" method="POST">
+                            <input type="hidden" name="id" value="<?php echo $user['id']; ?>">
+                            <div class="form-group">
+                                <label for="firstname">First Name</label>
+                                <input type="text" class="form-control" id="firstname" name="firstname" value="<?php echo htmlspecialchars($user['firstname']); ?>" >
+                            </div>
+                            <div class="form-group">
+                                <label for="lastname">Last Name</label>
+                                <input type="text" class="form-control" id="lastname" name="lastname" value="<?php echo htmlspecialchars($user['lastname']); ?>" >
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" class="form-control" id="email" name="email" value="<?php echo htmlspecialchars($user['email']); ?>" >
+                            </div>
+                            <div class="form-group">
+                                <label for="password">New Password</label>
+                                <input type="password" class="form-control" id="password" name="password">
+                            </div>
+                            <div class="form-group">
+                                <label for="address">Address</label>
+                                <input type="text" class="form-control" id="address" name="address" value="<?php echo htmlspecialchars($user['address']); ?>" >
+                            </div>
+                            <div class="form-group">
+                                <label for="gender">Gender</label>
+                                <select class="form-control" id="gender" name="gender" >
+                                    <option value="male" <?php if ($user['gender'] == 'male') echo 'selected'; ?>>Male</option>
+                                    <option value="female" <?php if ($user['gender'] == 'female') echo 'selected'; ?>>Female</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">Phone</label>
+                                <input type="text" class="form-control" id="phone" name="phone" value="<?php echo htmlspecialchars($user['phone']); ?>" >
+                            </div>
+                            <button type="submit" class="btn btn-primary">Update</button>
+                            <a href="index.php" class="btn btn-secondary">Cancel</a>
+                        </form>
+                    </div>
+                </div>
+                <footer class="sticky-footer bg-white">
+                    <div class="container my-auto">
+                        <div class="copyright text-center my-auto">
+                            <span>Copyright &copy; Your Website <span id="year"></span></span>
+                        </div>
+                    </div>
+                </footer>
             </div>
-            <div class="form-group">
-                <label for="lastname">Last Name</label>
-                <input type="text" class="form-control" id="lastname" name="lastname" value="<?php echo $user['lastname']; ?>">
-            </div>
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" class="form-control" id="email" name="email" value="<?php echo $user['email']; ?>">
-            </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="text" class="form-control" id="password" name="password" value="<?php echo $user['password']; ?>">
-            </div>
-            <div class="form-group">
-                <label for="address">Address</label>
-                <input type="text" class="form-control" id="address" name="address" value="<?php echo $user['address']; ?>">
-            </div>
-            <div class="form-group">
-                <label for="gender">Gender</label>
-                <select class="form-control" id="gender" name="gender">
-                    <option value="male" <?php if ($user['gender'] == 'male') echo 'selected'; ?>>Male</option>
-                    <option value="female" <?php if ($user['gender'] == 'female') echo 'selected'; ?>>Female</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="phone">Phone</label>
-                <input type="text" class="form-control" id="phone" name="phone" value="<?php echo $user['phone']; ?>">
-            </div>
-            <button type="submit" class="btn btn-primary">Update</button>
-            <a href="index.php" class="btn btn-secondary">Cancel</a>
-        </form>
+        </div>
     </div>
-</div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script   script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
+    <script src="../../vendor/jquery/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+    <script src="../../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="../../js/sb-admin-2.min.js"></script>
+    <script src="../../vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="../../vendor/datatables/dataTables.bootstrap4.min.js"></script>
+    <script src="../../https://cdnjs.cloudflare.com/ajax/libs/jquery-toast-plugin/1.3.2/jquery.toast.js"
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        document.getElementById('year').textContent = new Date().getFullYear();
+    </script>
+    <script>
+        $(document).ready(function() {
+            $('#editForm').validate({
+                rules: {
+                    firstname: {
+                        required: true
+                    },
+                    lastname: {
+                        required: true
+                    },
+                    email: {
+                        required: true,
+                        email: true
+                    },
+                    password: {
+                        required: true,
+                        minlength: 6
+                    },
+                    address: {
+                        required: true
+                    },
+                    gender: {
+                        required: true
+                    },
+                    phone: {
+                        required: true,
+                        minlength: 11,
+                        digits: true, // Ensures that only digits are entered
+                        maxlength: 11 // Ensures the phone number is exactly 11 digits
+                    }
+                },
+                messages: {
+                    firstname: {
+                        required: "First name is required."
+                    },
+                    lastname: {
+                        required: "Last name is required."
+                    },
+                    email: {
+                        required: "Email address is required.",
+                        email: "Please enter a valid email address."
+                    },
+                    password: {
+                        required: "Password is required.",
+                        minlength: "Password must be at least 6 characters long."
+                    },
+                    address: {
+                        required: "Address is required."
+                    },
+                    gender: {
+                        required: "Gender is required."
+                    },
+                    phone: {
+                        required: "Phone number is required.",
+                        digits: "Please enter only digits",
+                        minlength: "Phone number must be exactly 11 digits",
+                        maxlength: "Phone number must be exactly 11 digits"
+                    }
+                },
+                errorElement: 'div',
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-group').append(error);
+                },
+                highlight: function(element, errorClass, validClass) {
+                    $(element).addClass('is-invalid').removeClass('is-valid');
+                },
+                unhighlight: function(element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid').addClass('is-valid');
+                }
+            });
+            $('#phone').on('input', function() {
+                if (this.value.length > 11) {
+                    this.value = this.value.slice(0, 11);
+                }
+            });
+        });
+    </script>
 </body>
 </html>
