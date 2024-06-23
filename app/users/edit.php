@@ -49,11 +49,10 @@ mysqli_close($conn);
 <body id="page-top">
     <div id="wrapper">
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
-                <div>
-                    <i class="fas fa-book fa-fw"></i>
+        <a class="sidebar-brand d-flex align-items-center justify-content-center" href="../../index.php">
+                <div class="sidebar-brand-text mx-3">
+                <img src="../../img/blogslogo.png" alt="Blogs Logo" style="max-height: 150px;">
                 </div>
-                <div class="sidebar-brand-text mx-3">EDIT USER DETAILS</div>
             </a>
             <li class="nav-item">
                 <a class="nav-link" href="../dashboard/index.html">

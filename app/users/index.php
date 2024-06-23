@@ -37,11 +37,10 @@ unset($_SESSION['edit_message']);
 <body id="page-top">
     <div id="wrapper">
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
-                <div>
-                    <i class="fas fa-book fa-fw"></i>
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="../../index.php">
+                <div class="sidebar-brand-text mx-3">
+                <img src="../../img/blogslogo.png" alt="Blogs Logo" style="max-height: 150px;">
                 </div>
-                <div class="sidebar-brand-text mx-3">BLOGS</div>
             </a>
             <li class="nav-item">
                 <a class="nav-link" href="../dashboard/index.html">
@@ -137,9 +136,9 @@ unset($_SESSION['edit_message']);
 
                                                         <?php
                                                         if ($row["status"] == 1) {
-                                                            echo "<a href='toggle_status.php?id=" . $row['id'] . "&status=" . $row['status'] . "' class='btn btn-sm btn-success' title='INACTIVE' onclick='return confirm(\"Are you sure you want to in-active this user?\");'><i class='fa fa-user-xmark'></i></a>";
+                                                            echo "<a href='status.php?id=" . $row['id'] . "&status=" . $row['status'] . "' class='btn btn-sm btn-success' title='INACTIVE' onclick='return confirm(\"Are you sure you want to in-active this user?\");'><i class='fa fa-user-xmark'></i></a>";
                                                         } else {
-                                                            echo "<a href='toggle_status.php?id=" . $row['id'] . "&status=" . $row['status'] . "' class='btn btn-sm btn-success' title='ACTIVE' onclick='return confirm(\"Are you sure you want to active this user?\");'><i class='fa fa-user-check'></i></a>";
+                                                            echo "<a href='status.php?id=" . $row['id'] . "&status=" . $row['status'] . "' class='btn btn-sm btn-success' title='ACTIVE' onclick='return confirm(\"Are you sure you want to active this user?\");'><i class='fa fa-user-check'></i></a>";
                                                         }
                                                         ?>
                                                     </td>
