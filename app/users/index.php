@@ -52,6 +52,11 @@ unset($_SESSION['edit_message']);
                     <i class="fas fa-fw fa-users"></i>
                     <span>Users</span></a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" href="../categories/index.php">
+                    <i class="fas fa-fw fa-list"></i>
+                    <span>Categories</span></a>
+            </li>
         </ul>
         <div id="content-wrapper" class="d-flex flex-column">
             <div id="content">
@@ -247,3 +252,11 @@ unset($_SESSION['edit_message']);
 
 </html>
 <!--php -S localhost:3636 -t .-->
+<!-- id 
+category 
+title,
+text(body),
+imgs,
+createdat, 
+category crud id name, status..,  -->
+

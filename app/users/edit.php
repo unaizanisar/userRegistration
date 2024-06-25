@@ -64,6 +64,11 @@ mysqli_close($conn);
                     <i class="fas fa-fw fa-users"></i>
                     <span>Users</span></a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" href="../categories/index.php">
+                    <i class="fas fa-fw fa-list"></i>
+                    <span>Categories</span></a>
+            </li>
         </ul>
         <div id="content-wrapper" class="d-flex flex-column">
             <div id="content">
