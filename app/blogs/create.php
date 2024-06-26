@@ -1,3 +1,10 @@
+<?php
+include '../database/db.php';
+$categoryQuery = "SELECT id, name FROM categories";
+$categories = $conn->query($categoryQuery);
+$userQuery = "SELECT id, firstname FROM users";
+$users = $conn->query($userQuery);
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -7,7 +14,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>Blog Categories</title>
+    <title>Add Blog</title>
     <link href="../../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
     <link href="../../css/sb-admin-2.min.css" rel="stylesheet">
@@ -35,31 +42,57 @@
                     <span>Users</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="./index.php">
+                <a class="nav-link" href="../categories/index.php">
                     <i class="fas fa-fw fa-list"></i>
                     <span>Categories</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="../blogs/index.php">
+                <a class="nav-link" href="./index.php">
                     <i class="fas fa-fw fa-book"></i>
                     <span>Blogs</span></a>
             </li>
         </ul>
         <div class="container-fluid">
-        <h1 class="h3 mb-2 text-gray-800">Add new Blog Category</h1>
+        <h1 class="h3 mb-2 text-gray-800">Add new Blog</h1>
         <div class="card shadow mb-4">
         <div class="card-body">
         <div class="table-responsive">
             <form id="registerForm" method="POST" action="add.php"> 
                 <div class="form-group">
-                <label for="name">Name</label>
-                <input type="text" class="form-control" id="name" name="name" >
+                <label for="title">Title</label>
+                <input type="text" class="form-control" id="title" name="title" >
                 </div>
                 <div class="form-group">
-                <label for="description">Description</label>
-                <input type="text" class="form-control" id="description" name="description" >
+                <label for="content">Content</label>
+                <input type="text" class="form-control" id="content" name="content" >
                 </div>
-                <button type="submit" class="btn btn-primary">Add Category</button>
+                <div class="form-group">
+                <label for="category_id">Category:</label>
+                <select id="category_id" name="category_id" class="form-control">
+                   <option value="">Select a category</option>
+                   <?php if ($categories->num_rows > 0): ?>
+                         <?php while ($category = $categories->fetch_assoc()): ?>
+                         <option value="<?= $category['id'] ?>"><?= $category['name'] ?></option>
+                        <?php endwhile; ?>
+                    <?php else: ?>
+                    <option value="">No categories available</option>
+                    <?php endif; ?>
+                </select>
+                </div>
+                <div class="form-group">
+                <label for="user_id">User:</label>
+                <select id="user_id" name="user_id" class="form-control">
+                    <option value="">Select a user</option>
+                        <?php if ($users->num_rows > 0): ?>
+                            <?php while ($user = $users->fetch_assoc()): ?>
+                            <option value="<?= $user['id'] ?>"><?= $user['firstname'] ?></option>
+                            <?php endwhile; ?>
+                        <?php else: ?>
+                        <option value="">No users available</option>
+                        <?php endif; ?>
+                </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Add Blog</button>
             </form>
         </div>
         </div>
@@ -75,19 +108,31 @@
             
             $('#registerForm').validate({
                 rules: {
-                    name: {
+                    title: {
                         required: true
                     },
-                    description: {
+                    content: {
+                        required: true
+                    },
+                    category_id: {
+                        required: true
+                    },
+                    user_id:{
                         required: true
                     }
                 },
                 messages: {
-                    name: {
-                        required: "Name is required."
+                    title: {
+                        required: "Title is required."
                     },
-                    description: {
-                        required: "Description is required."
+                    content: {
+                        required: "Content is required."
+                    },
+                    category_id: {
+                        required: "Category is required."
+                    },
+                    user_id: {
+                        required: "User is required."
                     }
                 },
                 errorElement: 'div',
@@ -107,4 +152,3 @@
     </script>
 </body>
 </html>
-<!-- toast not working  -->
