@@ -26,8 +26,7 @@
 <body id="page-top">
 
     <script>
-        window.location.href = './app/dashboard/index.html';
+        window.location.href = './app/login.php';
     </script>
 </body>
-
 </html>

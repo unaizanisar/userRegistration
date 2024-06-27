@@ -48,13 +48,13 @@ mysqli_close($conn);
 <body id="page-top">
     <div id="wrapper">
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="../../index.php">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="../dashboard/index.php">
                 <div class="sidebar-brand-text mx-3">
                     <img src="../../img/blogslogo.png" alt="Blogs Logo" style="max-height: 150px;">
                 </div>
             </a>
             <li class="nav-item">
-                <a class="nav-link" href="../dashboard/index.html">
+                <a class="nav-link" href="../dashboard/index.php">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span></a>
             </li>
@@ -79,9 +79,7 @@ mysqli_close($conn);
             <div class="mt-3">
                 <p><strong>Title:</strong> <?php echo $blog['title']; ?></p> <br>
                 <p><strong>Content:</strong> <?php echo $blog['content']; ?></p> <br>
-                <!-- <p><strong>Category ID:</strong> <?php echo $blog['category_id']; ?></p> <br> -->
                 <p><strong>Category Name:</strong> <?php echo htmlspecialchars($blog['category_name']); ?></p> <br>
-                <!-- <p><strong>User ID:</strong> <?php echo $blog['user_id']; ?></p> <br> -->
                 <p><strong>User Name:</strong> <?php echo htmlspecialchars($blog['user_name']); ?></p> <br>
             </div> 
             <div style="text-align:center">

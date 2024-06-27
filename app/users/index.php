@@ -1,6 +1,5 @@
 <?php include '../database/db.php'  ?>
 <?php
-include '../database/db.php';
 session_start(); // Start session to access session variables
 
 // Check for delete message in session
@@ -13,8 +12,6 @@ unset($_SESSION['delete_message']);
 unset($_SESSION['create_message']);
 unset($_SESSION['edit_message']);
 ?>
-
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -37,13 +34,13 @@ unset($_SESSION['edit_message']);
 <body id="page-top">
     <div id="wrapper">
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="../../index.php">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="../dashboard/index.php">
                 <div class="sidebar-brand-text mx-3">
                 <img src="../../img/blogslogo.png" alt="Blogs Logo" style="max-height: 150px;">
                 </div>
             </a>
             <li class="nav-item">
-                <a class="nav-link" href="../dashboard/index.html">
+                <a class="nav-link" href="../dashboard/index.php">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span></a>
             </li>
@@ -62,6 +59,7 @@ unset($_SESSION['edit_message']);
                     <i class="fas fa-fw fa-book"></i>
                     <span>Blogs</span></a>
             </li>
+            
         </ul>
         <div id="content-wrapper" class="d-flex flex-column">
             <div id="content">
@@ -92,7 +90,7 @@ unset($_SESSION['edit_message']);
                 <div class="container-fluid">
                     <h1 class="h3 mb-2 text-gray-800">BLOGS</h1>
                     <div class="col text-right">
-                        <a href="./create.html" class="btn btn-primary">Add New User</a>
+                        <a href="./create.php" class="btn btn-primary">Add New User</a>
                     </div> <br>
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">

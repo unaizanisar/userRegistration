@@ -49,13 +49,13 @@ mysqli_close($conn);
 <body id="page-top">
 <div id="wrapper">
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="../../index.php">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="../dashboard/index.php">
                 <div class="sidebar-brand-text mx-3">
                 <img src="../../img/blogslogo.png" alt="Blogs Logo" style="max-height: 150px;">
                 </div>
             </a>
             <li class="nav-item">
-                <a class="nav-link" href="../dashboard/index.html">
+                <a class="nav-link" href="../dashboard/index.php">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span></a>
             </li>
