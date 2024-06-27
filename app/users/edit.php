@@ -1,7 +1,19 @@
 <?php
+include '../database/db.php';
+session_start(); 
+if (!isset($_SESSION['user_id'])) {
+    // If not logged in, redirect to login page
+    header('Location: ../login.php');
+    exit();
+}?>
+<?php
 // Start the session
 session_start();
-
+if (!isset($_SESSION['user_id'])) {
+    // If not logged in, redirect to login page
+    header('Location: ../login.php');
+    exit();
+}
 // Check if ID is provided in the URL
 if (isset($_GET['id'])) {
     $id = $_GET['id'];

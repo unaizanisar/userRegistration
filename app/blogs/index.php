@@ -1,5 +1,13 @@
 <?php
 include '../database/db.php';
+session_start(); 
+if (!isset($_SESSION['user_id'])) {
+    // If not logged in, redirect to login page
+    header('Location: ../login.php');
+    exit();
+}?>
+<?php
+include '../database/db.php';
 $sql = "SELECT blogs.*, categories.name AS category_name, users.firstname AS user_name
 FROM blogs
 LEFT JOIN categories ON blogs.category_id = categories.id
@@ -14,6 +22,7 @@ if($result === false){
 <?php
 include '../database/db.php';
 session_start(); 
+
 $deleteMessage = isset($_SESSION['delete_message']) ? $_SESSION['delete_message'] : '';
 $createMessage = isset($_SESSION['create_message']) ? $_SESSION['create_message'] : '';
 $editMessage = isset($_SESSION['edit_message']) ? $_SESSION['edit_message'] : '';

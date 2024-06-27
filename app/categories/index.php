@@ -1,6 +1,14 @@
 <?php
 include '../database/db.php';
 session_start(); 
+if (!isset($_SESSION['user_id'])) {
+    // If not logged in, redirect to login page
+    header('Location: ../login.php');
+    exit();
+}?>
+<?php
+include '../database/db.php';
+session_start();
 $deleteMessage = isset($_SESSION['delete_message']) ? $_SESSION['delete_message'] : '';
 $createMessage = isset($_SESSION['create_message']) ? $_SESSION['create_message'] : '';
 $editMessage = isset($_SESSION['edit_message']) ? $_SESSION['edit_message'] : '';

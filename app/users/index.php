@@ -1,7 +1,11 @@
-<?php include '../database/db.php'  ?>
 <?php
-session_start(); // Start session to access session variables
-
+include '../database/db.php';
+session_start(); 
+if (!isset($_SESSION['user_id'])) {
+    // If not logged in, redirect to login page
+    header('Location: ../login.php');
+    exit();
+}
 // Check for delete message in session
 $deleteMessage = isset($_SESSION['delete_message']) ? $_SESSION['delete_message'] : '';
 $createMessage = isset($_SESSION['create_message']) ? $_SESSION['create_message'] : '';

@@ -1,4 +1,12 @@
 <?php
+include '../database/db.php';
+session_start(); 
+if (!isset($_SESSION['user_id'])) {
+    // If not logged in, redirect to login page
+    header('Location: ../login.php');
+    exit();
+}?>
+<?php
 include '../../database/db.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

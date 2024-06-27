@@ -1,6 +1,18 @@
 <?php
 include '../database/db.php';
-
+session_start(); 
+if (!isset($_SESSION['user_id'])) {
+    // If not logged in, redirect to login page
+    header('Location: ../login.php');
+    exit();
+}?>
+<?php
+include '../database/db.php';
+if (!isset($_SESSION['user_id'])) {
+    // If not logged in, redirect to login page
+    header('Location: ../login.php');
+    exit();
+}
 if (isset($_GET['id'])) {  //checks if the id provided is true
     $id = $_GET['id']; // id provided in the URL will get stored in id
     $sql = "SELECT * FROM users WHERE id = $id";

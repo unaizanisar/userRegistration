@@ -1,10 +1,19 @@
 <?php
 include '../database/db.php';
+session_start(); 
+if (!isset($_SESSION['user_id'])) {
+    // If not logged in, redirect to login page
+    header('Location: ../login.php');
+    exit();
+}?>
+<?php
+include '../database/db.php';
 $categoryQuery = "SELECT id, name FROM categories";
 $categories = $conn->query($categoryQuery);
 $userQuery = "SELECT id, firstname FROM users";
 $users = $conn->query($userQuery);
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
