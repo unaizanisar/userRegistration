@@ -45,10 +45,6 @@ if (!isset($_SESSION['user_id'])) {
                 <img src="../../img/blogslogo.png" alt="Blogs Logo" style="max-height: 150px;">
                 </div>
             </a>
-            <!-- Divider -->
-            <hr class="sidebar-divider my-0">
-
-            <!-- Nav Item - Dashboard -->
             <li class="nav-item">
                 <a class="nav-link" href="./index.php">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
@@ -70,11 +66,16 @@ if (!isset($_SESSION['user_id'])) {
                     <i class="fas fa-fw fa-book"></i>
                     <span>Blogs</span></a>
             </li>
-
-            <!-- Divider -->
-            <hr class="sidebar-divider d-none d-md-block">
-
-
+            <li class="nav-item">
+                <a class="nav-link" href="../roles/index.php">
+                    <i class="fas fa-fw fa-briefcase"></i>
+                    <span>Roles</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="../permissions/index.php">
+                    <i class="fas fa-fw fa-user-lock"></i>
+                    <span>Permissions</span></a>
+            </li>
         </ul>
         <!-- End of Sidebar -->
 

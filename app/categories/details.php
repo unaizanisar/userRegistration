@@ -72,6 +72,16 @@ mysqli_close($conn);
                     <i class="fas fa-fw fa-book"></i>
                     <span>Blogs</span></a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" href="../roles/index.php">
+                    <i class="fas fa-fw fa-briefcase"></i>
+                    <span>Roles</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="../permissions/index.php">
+                    <i class="fas fa-fw fa-user-lock"></i>
+                    <span>Permissions</span></a>
+            </li>
         </ul>
         <div class="container mt-5">
         <h2 style="text-align:center">Category Details</h2>

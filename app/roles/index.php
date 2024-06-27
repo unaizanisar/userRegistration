@@ -2,7 +2,6 @@
 include '../database/db.php';
 session_start(); 
 if (!isset($_SESSION['user_id'])) {
-    // If not logged in, redirect to login page
     header('Location: ../login.php');
     exit();
 }?>
@@ -12,12 +11,10 @@ session_start();
 $deleteMessage = isset($_SESSION['delete_message']) ? $_SESSION['delete_message'] : '';
 $createMessage = isset($_SESSION['create_message']) ? $_SESSION['create_message'] : '';
 $editMessage = isset($_SESSION['edit_message']) ? $_SESSION['edit_message'] : '';
-
 unset($_SESSION['delete_message']);
 unset($_SESSION['create_message']);
 unset($_SESSION['edit_message']);
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -27,7 +24,7 @@ unset($_SESSION['edit_message']);
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>Blog Categories</title>
+    <title>Roles</title>
     <link href="../../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
     <link href="../../css/sb-admin-2.min.css" rel="stylesheet">
@@ -65,7 +62,7 @@ unset($_SESSION['edit_message']);
                     <span>Blogs</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="../roles/index.php">
+                <a class="nav-link" href="./index.php">
                     <i class="fas fa-fw fa-briefcase"></i>
                     <span>Roles</span></a>
             </li>
@@ -76,9 +73,9 @@ unset($_SESSION['edit_message']);
             </li>
         </ul>
         <div class="container-fluid"> <br>
-        <h1 class="h3 mb-2 text-gray-800">Blog Categories</h1>
+        <h1 class="h3 mb-2 text-gray-800">Roles</h1>
             <div class="col text-right">
-                <a href="./category.php" class="btn btn-primary">Add New Category</a>
+                <a href="./create.php" class="btn btn-primary">Add New Role</a>
             </div> <br>
         <div class="card shadow mb-4">
             <div class="card-header py-3">
@@ -86,19 +83,18 @@ unset($_SESSION['edit_message']);
             </div>
             <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-bordered" id="users_table" width="100%" cellspacing="0">
+            <table class="table table-bordered" id="users_table" width="100%" cellspacing="0">
                     <thead>
                     <tr>
                     <th>#</th>
                     <th>Name</th>
-                    <th>Description</th>
                     <th>Status</th>
                     <th>Actions</th>
                     </tr>
                     </thead>
                     <tbody>
                     <?php
-                        $sql = "SELECT * FROM categories order by id desc";
+                        $sql = "SELECT * FROM roles order by id desc";
                             $result = mysqli_query($conn, $sql);
                                 if (mysqli_num_rows($result) > 0) {
                                     $count = 0;
@@ -106,7 +102,6 @@ unset($_SESSION['edit_message']);
                                     <tr>
                                     <td><?php echo ++$count; ?></td>
                                     <td><?php echo $row["name"]; ?></td>
-                                    <td><?php echo $row["description"]; ?></td>
                                     <td><?php
                                                         if ($row["status"] == 1) {
                                                             echo '<span class="badge badge-success">Active</span>';
@@ -118,13 +113,13 @@ unset($_SESSION['edit_message']);
                                                         <!-- Actions buttons -->
                                     <a href="details.php?id=<?php echo $row['id']; ?>" class="btn btn-sm btn-info" title="Details"><i class='fa fa-eye'></i></a> |
                                     <a href="edit.php?id=<?php echo $row['id']; ?>" class="btn btn-sm btn-primary" title="Edit"><i class='fa fa-pen'></i></a> |
-                                    <a href="delete.php?delete_id=<?php echo $row['id']; ?>" class="btn btn-sm btn-danger" title="Delete" onclick="return confirm('Are you sure you want to delete this user?');"><i class='fa fa-trash'></i></a> | 
+                                    <a href="delete.php?delete_id=<?php echo $row['id']; ?>" class="btn btn-sm btn-danger" title="Delete" onclick="return confirm('Are you sure you want to delete this role?');"><i class='fa fa-trash'></i></a> | 
 
                                     <?php
                                                         if ($row["status"] == 1) {
-                                                            echo "<a href='status.php?id=" . $row['id'] . "&status=" . $row['status'] . "' class='btn btn-sm btn-success' title='INACTIVE' onclick='return confirm(\"Are you sure you want to in-active this user?\");'><i class='fa fa-user-xmark'></i></a>";
+                                                            echo "<a href='status.php?id=" . $row['id'] . "&status=" . $row['status'] . "' class='btn btn-sm btn-success' title='INACTIVE' onclick='return confirm(\"Are you sure you want to in-active this role?\");'><i class='fa fa-user-xmark'></i></a>";
                                                         } else {
-                                                            echo "<a href='status.php?id=" . $row['id'] . "&status=" . $row['status'] . "' class='btn btn-sm btn-success' title='ACTIVE' onclick='return confirm(\"Are you sure you want to active this user?\");'><i class='fa fa-user-check'></i></a>";
+                                                            echo "<a href='status.php?id=" . $row['id'] . "&status=" . $row['status'] . "' class='btn btn-sm btn-success' title='ACTIVE' onclick='return confirm(\"Are you sure you want to active this role?\");'><i class='fa fa-user-check'></i></a>";
                                                         }
                                                         ?>
                                     </td>
@@ -143,9 +138,9 @@ unset($_SESSION['edit_message']);
                 </table>
             </div>
             </div>
-            </div>
-    </div>
-    <script src="../../vendor/jquery/jquery.min.js"></script>
+        </div>
+</div>
+<script src="../../vendor/jquery/jquery.min.js"></script>
     <script src="../../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="../../js/sb-admin-2.min.js"></script>
     <script src="../../vendor/datatables/jquery.dataTables.min.js"></script>
@@ -154,7 +149,6 @@ unset($_SESSION['edit_message']);
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-toast-plugin/1.3.2/jquery.toast.min.js"></script>
-
     <script>
         $(document).ready(function(){
             <?php if (!empty($createMessage)) : ?>
@@ -191,8 +185,4 @@ unset($_SESSION['edit_message']);
     
     </script>
 </body>
-</html>
-<!-- toast not working  -->
-<!-- expiry date blog
-loop hint  -->
-<!-- id category title, text(body), imgs, createdat, category crud id name, status..,  -->
+</html>                    
