@@ -28,7 +28,7 @@ if (isset($_GET['id'])) {  //checks if the id provided is true
     echo "No user ID provided.";
     exit;
 }
-
+$userName = isset($_SESSION['user_name']) ? $_SESSION['user_name'] : 'Guest';
 // Close connection
 mysqli_close($conn);
 ?>
@@ -94,23 +94,19 @@ mysqli_close($conn);
             <div id="content">
                 <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
                     <ul class="navbar-nav ml-auto">
-                        <li class="nav-item dropdown no-arrow">
+                    <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Douglas McGee</span>
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?php echo htmlspecialchars($userName); ?></span>
                                 <img class="img-profile rounded-circle" src="img/undraw_profile.svg">
                             </a>
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-                                <a class="dropdown-item" href="#">
+                                <a class="dropdown-item" href="profile.php">
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Profile
-                                </a>
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Settings
-                                </a>
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Activity Log
+                                </a> 
+                                <a class="dropdown-item" href="../authentication/logout.php">
+                                <i class="fas fa-sm fa-right-from-bracket mr-2 text-gray-400"></i>
+                                    Logout
                                 </a>
                             </div>
                         </li>
