@@ -6,6 +6,7 @@ if (!isset($_SESSION['user_id'])) {
     header('Location: ../login.php');
     exit();
 }?>
+
 <?php
 include '../database/db.php';
 session_start();

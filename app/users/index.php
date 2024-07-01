@@ -1,23 +1,40 @@
 <?php
+session_start();
 include '../database/db.php';
-session_start(); 
+
 if (!isset($_SESSION['user_id'])) {
-    // If not logged in, redirect to login page
     header('Location: ../login.php');
     exit();
 }
-// Check for delete message in session
+
+// Fetch user details if not already set in session
+if (!isset($_SESSION['user_name']) || !isset($_SESSION['profile_photo'])) {
+    $userId = $_SESSION['user_id'];
+    $query = "SELECT * FROM users WHERE id=?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("i", $userId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $user = $result->fetch_assoc();
+
+    $_SESSION['user_name'] = $user['firstname'] . ' ' . $user['lastname'];
+    $_SESSION['profile_photo'] = $user['profile_photo']; // Store the profile photo URL
+
+    $stmt->close();
+}
+
+// Check for messages
 $deleteMessage = isset($_SESSION['delete_message']) ? $_SESSION['delete_message'] : '';
 $createMessage = isset($_SESSION['create_message']) ? $_SESSION['create_message'] : '';
 $editMessage = isset($_SESSION['edit_message']) ? $_SESSION['edit_message'] : '';
 
-// Clear the session variable after displaying the message
+// Clear the session variables after displaying the messages
 unset($_SESSION['delete_message']);
 unset($_SESSION['create_message']);
 unset($_SESSION['edit_message']);
-// Get the user's name from the session
-$userName = isset($_SESSION['user_name']) ? $_SESSION['user_name'] : 'Guest';
 ?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -35,6 +52,7 @@ $userName = isset($_SESSION['user_name']) ? $_SESSION['user_name'] : 'Guest';
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-toast-plugin/1.3.2/jquery.toast.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css" rel="stylesheet">
 </head>
 
 <body id="page-top">
@@ -82,10 +100,11 @@ $userName = isset($_SESSION['user_name']) ? $_SESSION['user_name'] : 'Guest';
                 <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
                     <ul class="navbar-nav ml-auto">
                     <li class="nav-item dropdown no-arrow">
-    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?php echo htmlspecialchars($_SESSION['user_name']); ?></span>
-        <img class="img-profile rounded-circle" src="img/undraw_profile.svg">
-    </a>
+                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?php echo htmlspecialchars($_SESSION['user_name']); ?></span>
+                        <img class="img-profile rounded-circle" src="<?php echo htmlspecialchars($_SESSION['profile_photo']); ?>">
+                    </a>
+
     <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
         <a class="dropdown-item" href="profile.php">
             <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
@@ -97,7 +116,6 @@ $userName = isset($_SESSION['user_name']) ? $_SESSION['user_name'] : 'Guest';
         </a>
     </div>
 </li>
-
                     </ul>
                 </nav>
                 <div class="container-fluid">
@@ -118,7 +136,6 @@ $userName = isset($_SESSION['user_name']) ? $_SESSION['user_name'] : 'Guest';
                                             <th>First Name</th>
                                             <th>Last Name</th>
                                             <th>Email</th>
-                                            <th>Password</th>
                                             <th>Address</th>
                                             <th>Gender</th>
                                             <th>Phone</th>
@@ -138,7 +155,6 @@ $userName = isset($_SESSION['user_name']) ? $_SESSION['user_name'] : 'Guest';
                                                     <td><?php echo $row["firstname"]; ?></td>
                                                     <td><?php echo $row["lastname"]; ?></td>
                                                     <td><?php echo $row["email"]; ?></td>
-                                                    <td><?php echo $row["password"]; ?></td>
                                                     <td><?php echo $row["address"]; ?></td>
                                                     <td><?php echo $row["gender"]; ?></td>
                                                     <td><?php echo $row["phone"]; ?></td>
@@ -157,7 +173,7 @@ $userName = isset($_SESSION['user_name']) ? $_SESSION['user_name'] : 'Guest';
 
                                                         <?php
                                                         if ($row["status"] == 1) {
-                                                            echo "<a href='status.php?id=" . $row['id'] . "&status=" . $row['status'] . "' class='btn btn-sm btn-success' title='INACTIVE' onclick='return confirm(\"Are you sure you want to in-active this user?\");'><i class='fa fa-user-xmark'></i></a>";
+                                                            echo "<a href='status.php?id=" . $row['id'] . "&status=" . $row['status'] . "' class='btn btn-sm btn-danger' title='INACTIVE' onclick='return confirm(\"Are you sure you want to in-active this user?\");'><i class='fa fa-user-xmark'></i></a>";
                                                         } else {
                                                             echo "<a href='status.php?id=" . $row['id'] . "&status=" . $row['status'] . "' class='btn btn-sm btn-success' title='ACTIVE' onclick='return confirm(\"Are you sure you want to active this user?\");'><i class='fa fa-user-check'></i></a>";
                                                         }
@@ -190,40 +206,24 @@ $userName = isset($_SESSION['user_name']) ? $_SESSION['user_name'] : 'Guest';
             </footer>
         </div>
     </div>
-    <a class="scroll-to-top rounded" href="#page-top">
-        <i class="fas fa-angle-up"></i>
-    </a>
-    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
-                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" href="login.html">Logout</a>
-                </div>
-            </div>
-        </div>
+   
     </div>
     <script src="../../vendor/jquery/jquery.min.js"></script>
     <script src="../../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="../../js/sb-admin-2.min.js"></script>
-    <script src="../../vendor/datatables/jquery.dataTables.min.js"></script>
-    <script src="../../vendor/datatables/dataTables.bootstrap4.min.js"></script>
+  
     <script src="../../https://cdnjs.cloudflare.com/ajax/libs/jquery-toast-plugin/1.3.2/jquery.toast.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-toast-plugin/1.3.2/jquery.toast.min.js"></script>
+
+    <script src="../../vendor/jquery-easing/jquery.easing.min.js"></script>
+ 
+    <script src="../../vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="../../vendor/datatables/dataTables.bootstrap4.min.js"></script>
     <script>
         document.getElementById('year').textContent = new Date().getFullYear();
         $(document).ready(function() {
-
-            // $('#users_table').DataTable()
+            $('#users_table').DataTable();
             // Function to display toast based on delete message
             <?php if (!empty($deleteMessage)) : ?>
                 $.toast({

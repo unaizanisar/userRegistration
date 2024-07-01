@@ -11,11 +11,6 @@ $userName = isset($_SESSION['user_name']) ? $_SESSION['user_name'] : 'Guest';
 <?php
 // Start the session
 session_start();
-if (!isset($_SESSION['user_id'])) {
-    // If not logged in, redirect to login page
-    header('Location: ../login.php');
-    exit();
-}
 // Check if ID is provided in the URL
 if (isset($_GET['id'])) {
     $id = $_GET['id'];
@@ -103,8 +98,8 @@ mysqli_close($conn);
                     <ul class="navbar-nav ml-auto">
                     <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?php echo htmlspecialchars($userName); ?></span>
-                                <img class="img-profile rounded-circle" src="img/undraw_profile.svg">
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?php echo htmlspecialchars($_SESSION['user_name']); ?></span>
+                                <img class="img-profile rounded-circle" src="<?php echo htmlspecialchars($_SESSION['profile_photo']); ?>">
                             </a>
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
                                 <a class="dropdown-item" href="profile.php">
@@ -123,7 +118,7 @@ mysqli_close($conn);
                     <h1 class="h3 mb-2 text-gray-800">BLOGS</h1>
                     <div class="container mt-5">
                         <h3>Fill out the form to edit details!</h3> <br>
-                        <form id="editForm" action="update.php" method="POST">
+                        <form id="editForm" action="update.php" method="POST" enctype="multipart/form-data">
                             <input type="hidden" name="id" value="<?php echo $user['id']; ?>">
                             <div class="form-group">
                                 <label for="firstname">First Name</label>
@@ -155,6 +150,13 @@ mysqli_close($conn);
                             <div class="form-group">
                                 <label for="phone">Phone</label>
                                 <input type="text" class="form-control" id="phone" name="phone" value="<?php echo htmlspecialchars($user['phone']); ?>" >
+                            </div>
+                            <div class="form-group">
+                                <label for="profile_photo">Profile Photo</label>
+                                <?php if (!empty($user['profile_photo'])): ?>
+                                    <img src="<?php echo htmlspecialchars($user['profile_photo']); ?>" alt="Profile Photo" style="max-height: 100px;"><br>
+                                <?php endif; ?>
+                                <input type="file" id="profile_photo" name="profile_photo" accept="image/*">
                             </div>
                             <button type="submit" class="btn btn-primary">Update</button>
                             <a href="index.php" class="btn btn-secondary">Cancel</a>
@@ -198,10 +200,7 @@ mysqli_close($conn);
                         required: true,
                         email: true
                     },
-                    password: {
-                        required: true,
-                        minlength: 6
-                    },
+                    
                     address: {
                         required: true
                     },
@@ -226,10 +225,7 @@ mysqli_close($conn);
                         required: "Email address is required.",
                         email: "Please enter a valid email address."
                     },
-                    password: {
-                        required: "Password is required.",
-                        minlength: "Password must be at least 6 characters long."
-                    },
+                    
                     address: {
                         required: "Address is required."
                     },

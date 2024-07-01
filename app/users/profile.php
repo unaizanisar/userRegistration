@@ -33,7 +33,7 @@ unset($_SESSION['update_message']);
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>Users Table</title>
+    <title>User Profile</title>
     <link href="../../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
     <link href="../../css/sb-admin-2.min.css" rel="stylesheet">
@@ -89,7 +89,7 @@ unset($_SESSION['update_message']);
                     <li class="nav-item dropdown no-arrow">
     <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?php echo htmlspecialchars($_SESSION['user_name']); ?></span>
-        <img class="img-profile rounded-circle" src="img/undraw_profile.svg">
+        <img class="img-profile rounded-circle" src="<?php echo htmlspecialchars($user['profile_photo']); ?>">
     </a>
     <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
         <a class="dropdown-item" href="profile.php">
@@ -111,6 +111,11 @@ unset($_SESSION['update_message']);
                 <h6 class="m-0 font-weight-bold text-primary">User Details</h6>
             </div>
             <div class="card-body">
+            <?php if (!empty($user['profile_photo'])): ?>
+                <div class="text-center mb-4">
+                    <img src="<?php echo htmlspecialchars($user['profile_photo']); ?>" alt="Profile Photo" class="img-thumbnail" style="max-height: 150px;">
+                </div>
+            <?php endif; ?>
                 <p><strong>First Name:</strong> <?php echo htmlspecialchars($user['firstname']); ?></p>
                 <p><strong>Last Name:</strong> <?php echo htmlspecialchars($user['lastname']); ?></p>
                 <p><strong>Email:</strong> <?php echo htmlspecialchars($user['email']); ?></p>
@@ -138,10 +143,10 @@ unset($_SESSION['update_message']);
                 $.toast({
                     heading: 'Update',
                     text: '<?php echo $updateMessage; ?>',
-                    showHideTransition: 'slide',
+                    loader: false,
                     icon: 'success',
                     position: 'top-right',
-                    loaderBg: '#f2a654',
+                  
                 });
             <?php } ?>
         });

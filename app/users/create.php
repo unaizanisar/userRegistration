@@ -8,6 +8,24 @@ if (!isset($_SESSION['user_id'])) {
     
 }
 $userName = isset($_SESSION['user_name']) ? $_SESSION['user_name'] : 'Guest';?>
+<?php
+$userId = $_SESSION['user_id'];
+
+// Fetch user details from the database
+$query = "SELECT * FROM users WHERE id=?";
+$stmt = $conn->prepare($query);
+$stmt->bind_param("i", $userId);
+$stmt->execute();
+$result = $stmt->get_result();
+$user = $result->fetch_assoc();
+
+$_SESSION['user_name'] = $user['firstname'] . ' ' . $user['lastname'];
+$_SESSION['profile_photo'] = $user['profile_photo']; // Store the profile photo URL
+
+$stmt->close();
+$conn->close();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -76,10 +94,10 @@ $userName = isset($_SESSION['user_name']) ? $_SESSION['user_name'] : 'Guest';?>
                 <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
                     <ul class="navbar-nav ml-auto">
                     <li class="nav-item dropdown no-arrow">
-                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?php echo htmlspecialchars($userName); ?></span>
-                                <img class="img-profile rounded-circle" src="img/undraw_profile.svg">
-                            </a>
+                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?php echo htmlspecialchars($_SESSION['user_name']); ?></span>
+                        <img class="img-profile rounded-circle" src="<?php echo htmlspecialchars($_SESSION['profile_photo']); ?>">
+                    </a>
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
                                 <a class="dropdown-item" href="profile.php">
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
@@ -100,7 +118,7 @@ $userName = isset($_SESSION['user_name']) ? $_SESSION['user_name'] : 'Guest';?>
                        
                         <div class="card-body">
                             <div class="table-responsive">
-                                 <form id="registerForm" method="POST" action="./php_script/create.php"> 
+                                 <form id="registerForm" method="POST" action="./php_script/create.php" enctype="multipart/form-data"> 
                                     <div class="form-group">
                                         <label for="name">First Name</label>
                                         <input type="text" class="form-control" id="firstname" name="firstname" >
@@ -115,11 +133,11 @@ $userName = isset($_SESSION['user_name']) ? $_SESSION['user_name'] : 'Guest';?>
                                     </div>
                                     <div class="form-group">
                                         <label for="password">Password</label>
-                                        <input type="text" class="form-control" id="password" name="password" >
+                                        <input type="password" class="form-control" id="password" name="password" >
                                     </div>
                                     <div class="form-group">
                                         <label for="address">Address</label>
-                                        <input type="number" class="form-control" id="address" name="address" >
+                                        <input type="text" class="form-control" id="address" name="address" >
                                     </div>
                                     <div class="form-group">
                                         <label for="gender">Gender:</label>
@@ -133,7 +151,10 @@ $userName = isset($_SESSION['user_name']) ? $_SESSION['user_name'] : 'Guest';?>
                                         <label for="phone">Phone</label>
                                         <input type="number" class="form-control" id="phone" name="phone" >
                                     </div>
-                                    
+                                    <div class="form-group">
+                                        <label for="profile_photo">Profile Photo</label>
+                                        <input type="file" class="form-control" id="profile_photo" name="profile_photo" accept="image/*">
+                                    </div>
                                     <button type="submit" class="btn btn-primary">Register</button>
                         
                                 </form>
@@ -148,7 +169,7 @@ $userName = isset($_SESSION['user_name']) ? $_SESSION['user_name'] : 'Guest';?>
                         <span>Copyright &copy; Your Website <span id="year"></span></span>
                     </div>
                 </div>
-                </footer>
+            </footer>
         </div>
     </div>
     <a class="scroll-to-top rounded" href="#page-top">
@@ -213,7 +234,7 @@ $userName = isset($_SESSION['user_name']) ? $_SESSION['user_name'] : 'Guest';?>
                         required: true,
                     digits: true,
                     minlength: 11,
-                    maxlength: 11,
+                    maxlength: 11
                    
                     }
                 },

@@ -15,13 +15,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($result->num_rows == 1) {
         $user = $result->fetch_assoc();
+       
         if (password_verify($password, $user['password'])) {
+            if($user['status'] == 0){
+               
+                header('Location: admin_support.php');
+                exit;
+            } else {
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['user_name'] = $user['firstname']. ' ' . $user['lastname'];
+                $_SESSION['user_email'] = $user['email'];
+                header('Location: ../dashboard/index.php'); 
+                exit;
+            }
            
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['user_name'] = $user['firstname']. ' ' . $user['lastname'];
-            $_SESSION['user_email'] = $user['email'];
-            header('Location: ../dashboard/index.php'); 
-            exit;
         } else {
             echo "Invalid password";
         }

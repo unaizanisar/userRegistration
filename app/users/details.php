@@ -8,11 +8,6 @@ if (!isset($_SESSION['user_id'])) {
 }?>
 <?php
 include '../database/db.php';
-if (!isset($_SESSION['user_id'])) {
-    // If not logged in, redirect to login page
-    header('Location: ../login.php');
-    exit();
-}
 if (isset($_GET['id'])) {  //checks if the id provided is true
     $id = $_GET['id']; // id provided in the URL will get stored in id
     $sql = "SELECT * FROM users WHERE id = $id";
@@ -118,7 +113,7 @@ mysqli_close($conn);
             <p><strong>First Name:</strong> <?php echo $user['firstname']; ?></p> <br>
             <p><strong>Last Name:</strong> <?php echo $user['lastname']; ?></p> <br>
             <p><strong>Email:</strong> <?php echo $user['email']; ?></p><br>
-            <p><strong>Password:</strong> <?php echo $user['password']; ?></p><br>
+           
             <p><strong>Address:</strong> <?php echo $user['address']; ?></p><br>
             <p><strong>Gender:</strong> <?php echo $user['gender']; ?></p><br>
             <p><strong>Phone:</strong> <?php echo $user['phone']; ?></p><br>
@@ -131,9 +126,13 @@ mysqli_close($conn);
             <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto">
-                        <span>Copyright &copy; Your Website 2020</span>
+                        <span>Copyright &copy; Your Website <span id="year"></span></span>
                     </div>
                 </div>
             </footer>
+
+            <script>
+                document.getElementById('year').textContent = new Date().getFullYear();
+            </script>
 </body>
 </html>

@@ -6,7 +6,22 @@ if (!isset($_SESSION['user_id'])) {
     header('Location: ../login.php');
     exit();
 }
-$userName = isset($_SESSION['user_name']) ? $_SESSION['user_name'] : 'Guest';?>
+$userName = isset($_SESSION['user_name']) ? $_SESSION['user_name'] : 'Guest';
+if (!isset($_SESSION['user_name']) || !isset($_SESSION['profile_photo'])) {
+    $userId = $_SESSION['user_id'];
+    $query = "SELECT * FROM users WHERE id=?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("i", $userId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $user = $result->fetch_assoc();
+
+    $_SESSION['user_name'] = $user['firstname'] . ' ' . $user['lastname'];
+    $_SESSION['profile_photo'] = $user['profile_photo']; // Store the profile photo URL
+
+    $stmt->close();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -95,10 +110,10 @@ $userName = isset($_SESSION['user_name']) ? $_SESSION['user_name'] : 'Guest';?>
                 <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
                     <ul class="navbar-nav ml-auto">
                     <li class="nav-item dropdown no-arrow">
-                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?php echo htmlspecialchars($userName); ?></span>
-                                <img class="img-profile rounded-circle" src="img/undraw_profile.svg">
-                            </a>
+                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?php echo htmlspecialchars($_SESSION['user_name']); ?></span>
+                        <img class="img-profile rounded-circle" src="<?php echo htmlspecialchars($_SESSION['profile_photo']); ?>">
+                    </a>
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
                                 <a class="dropdown-item" href="../users/profile.php">
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
