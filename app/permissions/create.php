@@ -96,6 +96,10 @@ $userName = isset($_SESSION['user_name']) ? $_SESSION['user_name'] : 'Guest';?>
                 <label for="name">Name</label>
                 <input type="text" class="form-control" id="name" name="name" >
                 </div>
+                <div class="form-group">
+                <label for="name">Module</label>
+                <input type="text" class="form-control" id="module" name="module" >
+                </div>
                 <button type="submit" class="btn btn-primary">Add Permission</button>
             </form>
         </div>

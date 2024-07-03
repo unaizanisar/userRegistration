@@ -6,7 +6,23 @@ if (!isset($_SESSION['user_id'])) {
     header('Location: ../login.php');
     exit();
 }
-$userName = isset($_SESSION['user_name']) ? $_SESSION['user_name'] : 'Guest';?>
+
+// Fetch permissions grouped by module
+$sql = "SELECT module, id, name FROM permissions ORDER BY module, name";
+$result = mysqli_query($conn, $sql);
+
+$permissionsByModule = [];
+if (mysqli_num_rows($result) > 0) {
+    while ($row = mysqli_fetch_assoc($result)) {
+        $module = $row['module'];
+        if (!isset($permissionsByModule[$module])) {
+            $permissionsByModule[$module] = [];
+        }
+        $permissionsByModule[$module][] = $row;
+    }
+}
+$userName = isset($_SESSION['user_name']) ? $_SESSION['user_name'] : 'Guest';
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -24,6 +40,19 @@ $userName = isset($_SESSION['user_name']) ? $_SESSION['user_name'] : 'Guest';?>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-toast-plugin/1.3.2/jquery.toast.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+    .custom-control.custom-checkbox .custom-control-label {
+        padding-left: 25px; /* Adjust this value as needed to create space between the checkbox and the label */
+    }
+    .custom-control-input {
+        position: relative;
+        margin-left: 0;
+    }
+    .custom-control-input:checked ~ .custom-control-label::before {
+        background-color: #007bff; /* Bootstrap primary color */
+        border-color: #007bff;
+    }
+</style>
 </head>
 <body id="page-top">
     <div id="wrapper">
@@ -91,13 +120,26 @@ $userName = isset($_SESSION['user_name']) ? $_SESSION['user_name'] : 'Guest';?>
         <div class="card shadow mb-4">
         <div class="card-body">
         <div class="table-responsive">
-            <form id="registerForm" method="POST" action="add.php"> 
-                <div class="form-group">
-                <label for="name">Name</label>
-                <input type="text" class="form-control" id="name" name="name" >
-                </div>
-                <button type="submit" class="btn btn-primary">Add Role</button>
-            </form>
+        <form id="registerForm" method="POST" action="add.php"> 
+                                    <div class="form-group">
+                                        <label for="name">Name</label>
+                                        <input type="text" class="form-control" id="name" name="name">
+                                    </div>
+                                    <div class="form-group">
+    <label>Permissions</label><br>
+    <?php foreach ($permissionsByModule as $module => $permissions) : ?>
+        <h5><?php echo htmlspecialchars($module); ?></h5>
+        <?php foreach ($permissions as $permission) : ?>
+            <div class="custom-control custom-checkbox mb-2">
+                <input type="checkbox" class="custom-control-input" id="permission_<?php echo $permission['id']; ?>" name="permissions[]" value="<?php echo $permission['id']; ?>">
+                <label class="custom-control-label" for="permission_<?php echo $permission['id']; ?>"><?php echo htmlspecialchars($permission['name']); ?></label>
+            </div>
+        <?php endforeach; ?>
+        <hr>
+    <?php endforeach; ?>
+</div>
+                                    <button type="submit" class="btn btn-primary">Add Role</button>
+                                </form>
         </div>
         </div>
         </div>

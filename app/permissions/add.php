@@ -3,11 +3,12 @@ include('../database/db.php');
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $name = $_POST['name'];
+    $module = $_POST['module'];
     
-    $sql = "INSERT INTO permissions (name) VALUES (?)";
+    $sql = "INSERT INTO permissions (name, module) VALUES (?,?)";
     $stmt = $conn->prepare($sql);
     if ($stmt) {
-        $stmt->bind_param("s", $name);
+        $stmt->bind_param("ss", $name, $module);
         if($stmt->execute()){
             session_start();
             $_SESSION['create_message'] = 'New Permission Added Successfully.';

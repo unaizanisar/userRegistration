@@ -27,7 +27,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             address = '$address',
             gender = '$gender',
             phone = '$phone'";
-
+    $_SESSION['user_name'] = $firstname . ' ' . $lastname;
     // Handle file upload
     $target_dir = "../uploads/profile_photos/";
     if (!is_dir($target_dir)) {
@@ -35,20 +35,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
     
     if (isset($_FILES["profile_photo"]) && $_FILES["profile_photo"]["error"] == UPLOAD_ERR_OK) {
-        $target_file = $target_dir . basename($_FILES["profile_photo"]["name"]);
         $uploadOk = 1;
-        $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+        $imageFileType = strtolower(pathinfo($_FILES["profile_photo"]["name"], PATHINFO_EXTENSION));
 
-        // Check if image file is a actual image or fake image
+        // Generate a unique file name
+        $uniqueFileName = uniqid() . '.' . $imageFileType;
+        $target_file = $target_dir . $uniqueFileName;
+
+        // Check if image file is a valid image
         $check = getimagesize($_FILES["profile_photo"]["tmp_name"]);
         if ($check === false) {
             echo "File is not an image.";
-            $uploadOk = 0;
-        }
-
-        // Check if file already exists
-        if (file_exists($target_file)) {
-            echo "Sorry, file already exists.";
             $uploadOk = 0;
         }
 
@@ -72,6 +69,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 // File uploaded successfully
                 $profile_photo = $target_file;
                 $sql .= ", profile_photo = '$profile_photo'";
+
+                // Update session variable
+                $_SESSION['profile_photo'] = $profile_photo;
             } else {
                 echo "Sorry, there was an error uploading your file.";
             }

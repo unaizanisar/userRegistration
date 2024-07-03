@@ -126,6 +126,10 @@ mysqli_close($conn);
                         <label for="name">Name</label>
                         <input type="text" id="name" name="name" class="form-control" value="<?php echo htmlspecialchars($permissions['name']); ?>">
                     </div>
+                    <div class="form-group">
+                        <label for="name">Module</label>
+                        <input type="text" id="module" name="module" class="form-control" value="<?php echo htmlspecialchars($permissions['module']); ?>">
+                    </div>
                     <button type="submit" class="btn btn-primary">Update</button>
                     <a href = "index.php" class="btn btn-secondary">Cancel</a>
                 </form>

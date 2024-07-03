@@ -89,7 +89,7 @@ unset($_SESSION['update_message']);
                     <li class="nav-item dropdown no-arrow">
     <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?php echo htmlspecialchars($_SESSION['user_name']); ?></span>
-        <img class="img-profile rounded-circle" src="<?php echo htmlspecialchars($user['profile_photo']); ?>">
+        <img class="img-profile rounded-circle" src="<?php echo htmlspecialchars($_SESSION['profile_photo']) . '?v=' . time(); ?>">
     </a>
     <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
         <a class="dropdown-item" href="profile.php">
@@ -105,7 +105,7 @@ unset($_SESSION['update_message']);
 
                     </ul>
                 </nav>
-        <h1 class="h3 mb-2 text-gray-800">Profile</h1>
+        <h1 class="h3 mb-2 text-gray-800" style="margin:20px">Profile</h1>
         <div class="card shadow mb-4">
             <div class="card-header py-3">
                 <h6 class="m-0 font-weight-bold text-primary">User Details</h6>
@@ -113,7 +113,7 @@ unset($_SESSION['update_message']);
             <div class="card-body">
             <?php if (!empty($user['profile_photo'])): ?>
                 <div class="text-center mb-4">
-                    <img src="<?php echo htmlspecialchars($user['profile_photo']); ?>" alt="Profile Photo" class="img-thumbnail" style="max-height: 150px;">
+                    <img src="<?php echo htmlspecialchars($_SESSION['profile_photo']); ?>" alt="Profile Photo" class="img-thumbnail" style="max-height: 150px;">
                 </div>
             <?php endif; ?>
                 <p><strong>First Name:</strong> <?php echo htmlspecialchars($user['firstname']); ?></p>

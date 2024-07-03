@@ -114,6 +114,7 @@ unset($_SESSION['edit_message']);
                     <tr>
                     <th>#</th>
                     <th>Name</th>
+                    <th>Module</th>
                     <th>Status</th>
                     <th>Actions</th>
                     </tr>
@@ -128,6 +129,7 @@ unset($_SESSION['edit_message']);
                                     <tr>
                                     <td><?php echo ++$count; ?></td>
                                     <td><?php echo $row["name"]; ?></td>
+                                    <td><?php echo $row["module"];?></td>
                                     <td><?php
                                                         if ($row["status"] == 1) {
                                                             echo '<span class="badge badge-success">Active</span>';
@@ -143,7 +145,7 @@ unset($_SESSION['edit_message']);
 
                                     <?php
                                                         if ($row["status"] == 1) {
-                                                            echo "<a href='status.php?id=" . $row['id'] . "&status=" . $row['status'] . "' class='btn btn-sm btn-success' title='INACTIVE' onclick='return confirm(\"Are you sure you want to in-active this permission?\");'><i class='fa fa-user-xmark'></i></a>";
+                                                            echo "<a href='status.php?id=" . $row['id'] . "&status=" . $row['status'] . "' class='btn btn-sm btn-danger' title='INACTIVE' onclick='return confirm(\"Are you sure you want to in-active this permission?\");'><i class='fa fa-user-xmark'></i></a>";
                                                         } else {
                                                             echo "<a href='status.php?id=" . $row['id'] . "&status=" . $row['status'] . "' class='btn btn-sm btn-success' title='ACTIVE' onclick='return confirm(\"Are you sure you want to active this permission?\");'><i class='fa fa-user-check'></i></a>";
                                                         }

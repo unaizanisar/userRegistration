@@ -1,20 +1,48 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 include '../database/db.php';
+session_start();
 
-if (isset($_GET['delete_id'])){
-    $id = $_GET['delete_id'];
-    $sql = "DELETE FROM permissions WHERE id = $id";
-    if(mysqli_query($conn, $sql)){
-        session_start();
-        $_SESSION['delete_message'] = "Permission Deleted Successfully!";
-    } else {
-        echo "Error deleting permission: " . mysqli_error($conn);
+if (isset($_GET['delete_id'])) {
+    $delete_id = $_GET['delete_id'];
+    
+    // Start transaction
+    $conn->begin_transaction();
+
+    try {
+        // Delete related entries in roles_has_permissions table
+        $sql1 = "DELETE FROM roles_has_permissions WHERE permission_id = ?";
+        $stmt1 = $conn->prepare($sql1);
+        $stmt1->bind_param("i", $delete_id);
+        $stmt1->execute();
+        $stmt1->close();
+
+        // Delete from permissions table
+        $sql2 = "DELETE FROM permissions WHERE id = ?";
+        $stmt2 = $conn->prepare($sql2);
+        $stmt2->bind_param("i", $delete_id);
+        $stmt2->execute();
+        $stmt2->close();
+
+        // Commit transaction
+        $conn->commit();
+
+        $_SESSION['delete_message'] = "Permission deleted successfully!";
+    } catch (mysqli_sql_exception $exception) {
+        // Rollback transaction if any error occurs
+        $conn->rollback();
+
+        $_SESSION['delete_message'] = "Error deleting permission: " . $exception->getMessage();
     }
-
-    mysqli_close($conn);
-    header("Location: index.php");
-    exit();
-} else{
-    echo "No ID provided for deletion.";
+} else {
+    $_SESSION['delete_message'] = "No permission ID specified for deletion.";
 }
+
+// Redirect back to the permissions page
+header("Location: index.php");
+exit();
+
 ?>

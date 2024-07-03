@@ -5,39 +5,56 @@ if (!isset($_SESSION['user_id'])) {
     // If not logged in, redirect to login page
     header('Location: ../login.php');
     exit();
-
 }
-$userName = isset($_SESSION['user_name']) ? $_SESSION['user_name'] : 'Guest';
-?>
-<?php
-include '../database/db.php';
 
-// Start the session
-session_start();
-
-// Check if ID is provided in the URL
+// Fetch user details based on ID
 if (isset($_GET['id'])) {
     $id = $_GET['id'];
 
-    // Fetch user details based on ID
-    $sql = "SELECT * FROM roles WHERE id = $id";
-    $result = mysqli_query($conn, $sql);
+    // Fetch role details
+    $sql = "SELECT * FROM roles WHERE id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-    if ($result && mysqli_num_rows($result) > 0) {
-        $roles = mysqli_fetch_assoc($result);
+    if ($result && $result->num_rows > 0) {
+        $roles = $result->fetch_assoc();
     } else {
-        $_SESSION['edit_message'] = 'User not found.';
+        $_SESSION['edit_message'] = 'Role not found.';
         header("Location: index.php");
         exit;
     }
+
+    // Fetch permissions
+    $permissionSql = "SELECT id, name FROM permissions ORDER BY module, name";
+    $permissionResult = $conn->query($permissionSql);
+    $permissions = [];
+    if ($permissionResult->num_rows > 0) {
+        while ($row = $permissionResult->fetch_assoc()) {
+            $permissions[] = $row;
+        }
+    }
+
+    // Fetch current role permissions
+    $rolePermissionsSql = "SELECT permission_id FROM roles_has_permissions WHERE role_id = ?";
+    $rolePermissionsStmt = $conn->prepare($rolePermissionsSql);
+    $rolePermissionsStmt->bind_param("i", $id);
+    $rolePermissionsStmt->execute();
+    $rolePermissionsResult = $rolePermissionsStmt->get_result();
+    $currentPermissions = [];
+    while ($row = $rolePermissionsResult->fetch_assoc()) {
+        $currentPermissions[] = $row['permission_id'];
+    }
+    $rolePermissionsStmt->close();
 } else {
-    $_SESSION['edit_message'] = 'No user ID provided.';
+    $_SESSION['edit_message'] = 'No role ID provided.';
     header("Location: index.php");
     exit;
 }
 
 // Close connection
-mysqli_close($conn);
+$conn->close();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -56,6 +73,19 @@ mysqli_close($conn);
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-toast-plugin/1.3.2/jquery.toast.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+    .custom-control.custom-checkbox .custom-control-label {
+        padding-left: 25px; /* Adjust this value as needed to create space between the checkbox and the label */
+    }
+    .custom-control-input {
+        position: relative;
+        margin-left: 0;
+    }
+    .custom-control-input:checked ~ .custom-control-label::before {
+        background-color: #007bff; /* Bootstrap primary color */
+        border-color: #007bff;
+    }
+</style>
 </head>
 <body id="page-top">
     <div id="wrapper">
@@ -129,6 +159,15 @@ mysqli_close($conn);
                         <label for="name">Name</label>
                         <input type="text" id="name" name="name" class="form-control" value="<?php echo htmlspecialchars($roles['name']); ?>">
                     </div>
+                    <div class="form-group">
+                                <label>Permissions</label><br>
+                                <?php foreach ($permissions as $permission) : ?>
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="permission_<?php echo $permission['id']; ?>" name="permissions[]" value="<?php echo $permission['id']; ?>" <?php echo in_array($permission['id'], $currentPermissions) ? 'checked' : ''; ?>>
+                                        <label class="custom-control-label" for="permission_<?php echo $permission['id']; ?>"><?php echo htmlspecialchars($permission['name']); ?></label>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
                     <button type="submit" class="btn btn-primary">Update</button>
                     <a href = "index.php" class="btn btn-secondary">Cancel</a>
                 </form>

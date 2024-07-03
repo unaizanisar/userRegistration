@@ -103,7 +103,7 @@ unset($_SESSION['edit_message']);
             </div> <br>
         <div class="card shadow mb-4">
             <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Categories</h6>
+            <h6 class="m-0 font-weight-bold text-primary">Roles</h6>
             </div>
             <div class="card-body">
             <div class="table-responsive">
@@ -141,7 +141,7 @@ unset($_SESSION['edit_message']);
 
                                     <?php
                                                         if ($row["status"] == 1) {
-                                                            echo "<a href='status.php?id=" . $row['id'] . "&status=" . $row['status'] . "' class='btn btn-sm btn-success' title='INACTIVE' onclick='return confirm(\"Are you sure you want to in-active this role?\");'><i class='fa fa-user-xmark'></i></a>";
+                                                            echo "<a href='status.php?id=" . $row['id'] . "&status=" . $row['status'] . "' class='btn btn-sm btn-danger' title='INACTIVE' onclick='return confirm(\"Are you sure you want to in-active this role?\");'><i class='fa fa-user-xmark'></i></a>";
                                                         } else {
                                                             echo "<a href='status.php?id=" . $row['id'] . "&status=" . $row['status'] . "' class='btn btn-sm btn-success' title='ACTIVE' onclick='return confirm(\"Are you sure you want to active this role?\");'><i class='fa fa-user-check'></i></a>";
                                                         }
@@ -214,3 +214,9 @@ unset($_SESSION['edit_message']);
     </script>
 </body>
 </html>                    
+
+
+<!-- Roles has permissions table 
+id, role_id, permissions_id, created_at , updated_at 
+
+-->
