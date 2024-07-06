@@ -1,5 +1,6 @@
 <?php
 include '../database/db.php';
+include '../../includes/config.php';
 session_start(); 
 if (!isset($_SESSION['user_id'])) {
     // If not logged in, redirect to login page

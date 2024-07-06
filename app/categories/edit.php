@@ -1,5 +1,6 @@
 <?php
 include '../database/db.php';
+include '../../includes/config.php';
 session_start(); 
 if (!isset($_SESSION['user_id'])) {
     // If not logged in, redirect to login page
@@ -67,30 +68,41 @@ mysqli_close($conn);
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span></a>
             </li>
+      
             <li class="nav-item">
                 <a class="nav-link" href="../users/index.php">
                     <i class="fas fa-fw fa-users"></i>
                     <span>Users</span></a>
             </li>
+     
             <li class="nav-item">
-                <a class="nav-link" href="./index.php">
+                <a class="nav-link" href="index.php">
                     <i class="fas fa-fw fa-list"></i>
                     <span>Categories</span></a>
             </li>
+
             <li class="nav-item">
-                <a class="nav-link" href="../blogs/index.php">
+                <a class="nav-link" href="index.php">
                     <i class="fas fa-fw fa-book"></i>
                     <span>Blogs</span></a>
             </li>
+
             <li class="nav-item">
                 <a class="nav-link" href="../roles/index.php">
                     <i class="fas fa-fw fa-briefcase"></i>
                     <span>Roles</span></a>
             </li>
+   
             <li class="nav-item">
                 <a class="nav-link" href="../permissions/index.php">
                     <i class="fas fa-fw fa-user-lock"></i>
                     <span>Permissions</span></a>
+            </li>
+  
+            <li class="nav-item">
+                <a class="nav-link" href="../authentication/logout.php">
+                    <i class="fas fa-fw fa-sign-out"></i>
+                    <span>Logout</span></a>
             </li>
         </ul>
         <div id="content-wrapper" class="d-flex flex-column">

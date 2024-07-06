@@ -1,14 +1,14 @@
-<!-- authentication folder, login.php, signup.php app m daal do 
-password confirm pass
-success msg
-
-
-login php by default
-dashboard wali koi b file login k bghair access ma ho! -->
-
+<?php
+include_once __DIR__ . '../../includes/config.php';
+session_start(); 
+if (isset($_SESSION['user_id'])) {
+    // If not logged in, redirect to login page
+    header('Location: dashboard/index.php');
+    exit(); 
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">

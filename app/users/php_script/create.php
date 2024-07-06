@@ -1,5 +1,10 @@
 <?php
-include '../database/db.php';
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+include '../../database/db.php';
+include '../../includes/config.php';
 session_start(); 
 if (!isset($_SESSION['user_id'])) {
     // If not logged in, redirect to login page
@@ -7,7 +12,8 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-include '../../database/db.php';
+$roleQuery = "SELECT id, name FROM roles";
+$roles = $conn->query($roleQuery);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $firstname = $_POST['firstname'];
@@ -17,6 +23,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $address = $_POST['address'];
     $gender = $_POST['gender'];
     $phone = $_POST['phone'];
+    $role_id = $_POST['role_id'];
+    
 
     // Check if email is unique
     $emailQuery = "SELECT * FROM users WHERE email=?";
@@ -66,10 +74,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Check if file already exists
-    if (file_exists($target_file)) {
-        echo "Sorry, file already exists.";
-        $uploadOk = 0;
-    }
+    // if (file_exists($target_file)) {
+    //     echo "Sorry, file already exists.";
+    //     $uploadOk = 0;
+    // }
 
     // Check file size
     if ($_FILES["profile_photo"]["size"] > 500000) { // 500KB
@@ -92,11 +100,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $profile_photo = $target_file;
 
             // Insert user data into the database
-            $sql = "INSERT INTO users (firstname, lastname, email, password, address, gender, phone, profile_photo) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO users (firstname, lastname, email, password, address, gender, phone, role_id, profile_photo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $stmt = $conn->prepare($sql);
 
             if ($stmt) {
-                $stmt->bind_param("ssssssis", $firstname, $lastname, $email, $hashed_password, $address, $gender, $phone, $profile_photo);
+                $stmt->bind_param("ssssssiis", $firstname, $lastname, $email, $hashed_password, $address, $gender, $phone, $role_id, $profile_photo);
                 if ($stmt->execute()) {
                     $_SESSION['create_message'] = 'New user added successfully.';
                     header('Location: ../index.php');

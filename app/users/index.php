@@ -1,27 +1,38 @@
 <?php
+
 session_start();
 include '../database/db.php';
-
+include '../../includes/config.php';
 if (!isset($_SESSION['user_id'])) {
     header('Location: ../login.php');
     exit();
 }
 
 // Fetch user details if not already set in session
-if (!isset($_SESSION['user_name']) || !isset($_SESSION['profile_photo'])) {
+if (!isset($_SESSION['user_name']) || !isset($_SESSION['profile_photo']) || !isset($_SESSION['user_role'])) {
     $userId = $_SESSION['user_id'];
-    $query = "SELECT * FROM users WHERE id=?";
+
+    // Modify SQL query to include role names
+    $query = "SELECT users.*, roles.name AS role_name 
+              FROM users 
+              LEFT JOIN roles ON users.role_id = roles.id 
+              WHERE users.id=?";
+              
     $stmt = $conn->prepare($query);
     $stmt->bind_param("i", $userId);
     $stmt->execute();
     $result = $stmt->get_result();
     $user = $result->fetch_assoc();
 
+    // Store user details in session
     $_SESSION['user_name'] = $user['firstname'] . ' ' . $user['lastname'];
     $_SESSION['profile_photo'] = $user['profile_photo']; // Store the profile photo URL
+    $_SESSION['user_role'] = $user['role_name']; // Store the user role name
 
     $stmt->close();
 }
+
+// Check if the user has permission to view users
 
 // Check for messages
 $deleteMessage = isset($_SESSION['delete_message']) ? $_SESSION['delete_message'] : '';
@@ -32,8 +43,8 @@ $editMessage = isset($_SESSION['edit_message']) ? $_SESSION['edit_message'] : ''
 unset($_SESSION['delete_message']);
 unset($_SESSION['create_message']);
 unset($_SESSION['edit_message']);
-?>
 
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -68,32 +79,52 @@ unset($_SESSION['edit_message']);
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span></a>
             </li>
+            <?php
+            $permission_name = 'User Listing'; 
+            if (hasRolePermission($_SESSION['role_id'], $permission_name)) {?>
             <li class="nav-item">
                 <a class="nav-link" href="./index.php">
                     <i class="fas fa-fw fa-users"></i>
                     <span>Users</span></a>
             </li>
+            <?php }?>
+            <?php
+            $permission_name = 'Category Listing'; 
+            if (hasRolePermission($_SESSION['role_id'], $permission_name)) {?>
             <li class="nav-item">
                 <a class="nav-link" href="../categories/index.php">
                     <i class="fas fa-fw fa-list"></i>
                     <span>Categories</span></a>
             </li>
+            <?php }?>
             <li class="nav-item">
                 <a class="nav-link" href="../blogs/index.php">
                     <i class="fas fa-fw fa-book"></i>
                     <span>Blogs</span></a>
             </li>
+            <?php
+            $permission_name = 'Roles Listing'; 
+            if (hasRolePermission($_SESSION['role_id'], $permission_name)) {?>
             <li class="nav-item">
                 <a class="nav-link" href="../roles/index.php">
                     <i class="fas fa-fw fa-briefcase"></i>
                     <span>Roles</span></a>
             </li>
+            <?php }?>
+            <?php
+            $permission_name = 'Permissions Listing'; 
+            if (hasRolePermission($_SESSION['role_id'], $permission_name)) {?>
             <li class="nav-item">
                 <a class="nav-link" href="../permissions/index.php">
                     <i class="fas fa-fw fa-user-lock"></i>
                     <span>Permissions</span></a>
             </li>
-            
+            <?php }?>
+            <li class="nav-item">
+                <a class="nav-link" href="../authentication/logout.php">
+                    <i class="fas fa-fw fa-sign-out"></i>
+                    <span>Logout</span></a>
+            </li>
         </ul>
         <div id="content-wrapper" class="d-flex flex-column">
             <div id="content">
@@ -102,6 +133,7 @@ unset($_SESSION['edit_message']);
                     <li class="nav-item dropdown no-arrow">
                     <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?php echo htmlspecialchars($_SESSION['user_name']); ?></span>
+                        
                         <img class="img-profile rounded-circle" src="<?php echo htmlspecialchars($_SESSION['profile_photo']); ?>">
                     </a>
 
@@ -139,13 +171,16 @@ unset($_SESSION['edit_message']);
                                             <th>Address</th>
                                             <th>Gender</th>
                                             <th>Phone</th>
+                                            <th>Role</th>
                                             <th>Status</th>
                                             <th>Actions</th>
+                                        
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        
                                         <?php
-                                        $sql = "SELECT * FROM users order by id desc";
+                                        $sql = "SELECT users.*, roles.name AS role_name FROM users LEFT JOIN roles ON users.role_id = roles.id ORDER BY users.id DESC";
                                         $result = mysqli_query($conn, $sql);
                                         if (mysqli_num_rows($result) > 0) {
                                             $count = 0;
@@ -158,6 +193,7 @@ unset($_SESSION['edit_message']);
                                                     <td><?php echo $row["address"]; ?></td>
                                                     <td><?php echo $row["gender"]; ?></td>
                                                     <td><?php echo $row["phone"]; ?></td>
+                                                    <td><?php echo $row["role_name"];?></td>
                                                     <td><?php
                                                         if ($row["status"] == 1) {
                                                             echo '<span class="badge badge-success">Active</span>';
@@ -165,19 +201,35 @@ unset($_SESSION['edit_message']);
                                                             echo '<span class="badge badge-danger">In-active</span>';
                                                         }
                                                         ?></td>
-                                                    <td>
-                                                        <!-- Actions buttons -->
+                                                <!-- Actions buttons -->
+                                                        <?php
+                                                        $permission_name = 'User Detail'; 
+                                                        if (hasRolePermission($_SESSION['role_id'], $permission_name)) {?>
+                                                        <td>
+                                    
                                                         <a href="details.php?id=<?php echo $row['id']; ?>" class="btn btn-sm btn-info" title="Details"><i class='fa fa-eye'></i></a> |
+                                                        <?php }?>
+                                                        <?php
+                                                        $permission_name = 'User Edit'; 
+                                                        if (hasRolePermission($_SESSION['role_id'], $permission_name)) {?>
                                                         <a href="edit.php?id=<?php echo $row['id']; ?>" class="btn btn-sm btn-primary" title="Edit"><i class='fa fa-pen'></i></a> |
+                                                        <?php }?>
+                                                        <?php
+                                                        $permission_name = 'User Delete'; 
+                                                        if (hasRolePermission($_SESSION['role_id'], $permission_name)) {?>
+                                                            
                                                         <a href="delete.php?delete_id=<?php echo $row['id']; ?>" class="btn btn-sm btn-danger" title="Delete" onclick="return confirm('Are you sure you want to delete this user?');"><i class='fa fa-trash'></i></a> |
-
+                                                        <?php }?>
+                                                        <?php
+                                                        $permission_name = 'User Change Status'; 
+                                                        if (hasRolePermission($_SESSION['role_id'], $permission_name)) {?>
                                                         <?php
                                                         if ($row["status"] == 1) {
                                                             echo "<a href='status.php?id=" . $row['id'] . "&status=" . $row['status'] . "' class='btn btn-sm btn-danger' title='INACTIVE' onclick='return confirm(\"Are you sure you want to in-active this user?\");'><i class='fa fa-user-xmark'></i></a>";
                                                         } else {
                                                             echo "<a href='status.php?id=" . $row['id'] . "&status=" . $row['status'] . "' class='btn btn-sm btn-success' title='ACTIVE' onclick='return confirm(\"Are you sure you want to active this user?\");'><i class='fa fa-user-check'></i></a>";
                                                         }
-                                                        ?>
+                                                        ?><?php }?>
                                                     </td>
                                                 </tr>
 

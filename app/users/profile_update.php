@@ -1,6 +1,7 @@
 <?php
 session_start();
 include '../database/db.php';
+include '../../includes/config.php';
 
 if (!isset($_SESSION['user_id'])) {
     header('Location: ../login.php');

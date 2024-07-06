@@ -1,5 +1,6 @@
 <?php
 include '../database/db.php';
+include '../../includes/config.php';
 session_start();
 
 if($_SERVER["REQUEST_METHOD"] == "POST"){

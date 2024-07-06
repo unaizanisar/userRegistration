@@ -1,5 +1,6 @@
 <?php
 include '../database/db.php';
+include '../../includes/config.php';
 session_start(); 
 if (!isset($_SESSION['user_id'])) {
     // If not logged in, redirect to login page
@@ -7,6 +8,10 @@ if (!isset($_SESSION['user_id'])) {
     exit();
     
 }
+// Fetch roles except for "Super Admin"
+$roleQuery = "SELECT id, name FROM roles WHERE name != 'Super Admin'";
+$roles = $conn->query($roleQuery);
+
 $userName = isset($_SESSION['user_name']) ? $_SESSION['user_name'] : 'Guest';?>
 <?php
 $userId = $_SESSION['user_id'];
@@ -68,6 +73,7 @@ $conn->close();
                     <i class="fas fa-fw fa-users"></i>
                     <span>Users</span></a>
             </li>
+
             <li class="nav-item">
                 <a class="nav-link" href="../categories/index.php">
                     <i class="fas fa-fw fa-list"></i>
@@ -87,6 +93,11 @@ $conn->close();
                 <a class="nav-link" href="../permissions/index.php">
                     <i class="fas fa-fw fa-user-lock"></i>
                     <span>Permissions</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="../authentication/logout.php">
+                    <i class="fas fa-fw fa-sign-out"></i>
+                    <span>Logout</span></a>
             </li>
         </ul>
         <div id="content-wrapper" class="d-flex flex-column">
@@ -152,12 +163,26 @@ $conn->close();
                                         <input type="number" class="form-control" id="phone" name="phone" >
                                     </div>
                                     <div class="form-group">
+                                    <label for="role_id">Roles</label>
+                                    <select id="role_id" name="role_id" class="form-control">
+                                    <option value="">Select a role</option>
+                                    <?php if ($roles->num_rows > 0): ?>
+                                            <?php while ($role = $roles->fetch_assoc()): ?>
+                                            <option value="<?= $role['id'] ?>"><?= $role['name'] ?></option>
+                                            <?php endwhile; ?>
+                                        <?php else: ?>
+                                        <option value="">No roles available</option>
+                                        <?php endif; ?>
+                                    </select>
+                                    </div>
+                                    <div class="form-group">
                                         <label for="profile_photo">Profile Photo</label>
                                         <input type="file" class="form-control" id="profile_photo" name="profile_photo" accept="image/*">
                                     </div>
                                     <button type="submit" class="btn btn-primary">Register</button>
                         
                                 </form>
+                                
                             </div>
                         </div>
                     </div>
@@ -236,6 +261,9 @@ $conn->close();
                     minlength: 11,
                     maxlength: 11
                    
+                    },
+                    role_id: {
+                        required: true
                     }
                 },
                 messages: {
@@ -264,6 +292,9 @@ $conn->close();
                     digits: "Please enter only digits",
                     minlength: "Phone number must be exactly 11 digits",
                     maxlength: "Phone number must be exactly 11 digits",
+                    },
+                    role_id: {
+                        required: "Role is required."
                     }
                 },
                 errorElement: 'div',

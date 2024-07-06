@@ -1,7 +1,7 @@
 <?php
 session_start();
 include '../database/db.php';
-
+include '../../includes/config.php';
 if (!isset($_SESSION['user_id'])) {
     header('Location: ../login.php');
     exit();
@@ -74,6 +74,11 @@ $conn->close();
                 <a class="nav-link" href="../permissions/index.php">
                     <i class="fas fa-fw fa-user-lock"></i>
                     <span>Permissions</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="../authentication/logout.php">
+                    <i class="fas fa-fw fa-sign-out"></i>
+                    <span>Logout</span></a>
             </li>
         </ul>
         <div id="content-wrapper" class="d-flex flex-column">

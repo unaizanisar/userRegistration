@@ -1,6 +1,6 @@
 <?php
 include '../database/db.php';
-
+include '../../includes/config.php';
 if (isset($_GET['delete_id'])){
     $id = $_GET['delete_id'];
 
